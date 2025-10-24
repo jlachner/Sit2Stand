@@ -1,0 +1,104 @@
+%% Clean up
+clear; clc; close all;
+
+%% Setup
+robot = iiwa14('high');
+robot.init();
+
+% Initialize Animation
+anim = Animation('Dimension', 3, ...
+    'xLim', [-0.2, 1.2], 'yLim', [-0.7, 0.7], 'zLim', [-0.5, 1.2], ...
+    'isSaveVideo', false, 'VideoSpeed', 1.0);
+anim.init();
+anim.attachRobot(robot);
+
+% Line parameters
+A = 0.05;           % distance (meters)
+T_lin = 2;          % period for one revolution
+omega = 2 * pi / T_lin;
+
+% Timing
+dt = 0.005;                         
+Nt = round(T_lin / dt);
+%Nt = 1;
+t_record = linspace(0, T_lin, Nt);
+
+% Initial joint configuration
+q = deg2rad([-85.39, 104.49, 26.71, -61.70, 67.68, 69.05, 21.81]');                    
+H0 = robot.getForwardKinematics(q); 
+R0 = H0(1:3, 1:3);                      % Starting orientation    
+p0 = H0(1:3, 4);                         % Starting EE position
+p_des = p0;
+p_des_ee_ini = R0 * p_des;
+p_des_ee = p_des_ee_ini;
+
+
+% Get Jacobian and extract translational part
+J = robot.getHybridJacobian(q);         % 6x7
+Jv = J(1:3, :);                          % translational velocities
+
+% Preallocate
+z_des_ee = 0;
+q_record = zeros(robot.nq, Nt);
+p_traj = zeros(3, Nt);
+p_des_traj = zeros(3, Nt);
+
+% Loop over time steps
+for i = 1:Nt
+    t = t_record(i);
+    
+    % Move along -z in ee coords
+    p_des_ee(3) = p_des_ee_ini(3) - A * sin( 0.25 * omega * t )
+    p_des = R0' * p_des_ee;
+    p_des_traj(:, i) = p_des;
+
+    % Current EE pose
+    H = robot.getForwardKinematics(q);
+    p = H(1:3, 4);
+    p_traj(:, i) = p;
+
+    % Compute twist (task-space velocity)
+    dp = (p_des - p) / dt;
+    w = zeros(3,1);  % fixed orientation
+    twist = [dp; w];
+
+    % Inverse Kinematics: least-square dynamically consistent
+    J = robot.getHybridJacobian(q);
+    M = robot.getMassMatrix(q);
+    M_inv = M \ eye(size(M));
+    k = 0.01;
+    Lambda_inv = J * M_inv * J' + k^2 * eye(6);
+    Lambda = Lambda_inv \ eye(6);
+    J_inv = M_inv * J' * Lambda;
+
+    dq = J_inv * twist;
+    q = q + dq * dt;
+
+    q_record(:, i) = q;
+    t = t + dt;
+
+    robot.updateKinematics(q);
+    anim.update(t);
+end
+
+anim.close();
+
+%% Smooth and Save
+q_record_smoothed = sgolayfilt(q_record, 3, 11, [], 2);
+csvwrite('q_linear_z.csv', q_record_smoothed);
+
+% Plot joint trajectories
+figure;
+plot(t_record, q_record_smoothed);
+xlabel('Time [s]');
+ylabel('Joint Angles [rad]');
+title('Smoothed Joint Trajectories');
+
+%% Plot Workspace Trajectory
+figure;
+plot3(p_traj(1,:), p_traj(2,:), p_traj(3,:), 'b-', 'LineWidth', 2); hold on;
+plot3(p_des_traj(1,:), p_des_traj(2,:), p_des_traj(3,:), 'r--', 'LineWidth', 1.5);
+grid on; axis equal;
+xlabel('x [m]'); ylabel('y [m]'); zlabel('z [m]');
+legend('Actual EE Trajectory', 'Desired Circular Path');
+title('End-Effector Workspace Trajectory');
