@@ -35,4 +35,11 @@ Using **CMake Tools**:
      ../build/Debug/Sit2Stand
      ```
 
-### Run Java Application (SmartPAD)
+### Run Java Application
+Run application on SmartPAD
+
+### Analysis in Explicit-Matlab
+Clone repo here
+https://github.com/explicit-robotics/Explicit-MATLAB
+
+run 'setup.m'
