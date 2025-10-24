@@ -282,7 +282,7 @@ void LBRJointSineOverlayClient::command()
         _index = _N_data - 1;
 
     memcpy( qOld, qCurr, 7*sizeof(double) );
-    memcpy( qCurr, robotState().getIpoJointPosition(), 7*sizeof(double) );
+    memcpy( qCurr, robotState().getMeasuredJointPosition(), 7*sizeof(double) );
 
     for (int i=0; i < myLBR->nq; i++)
     {
@@ -329,7 +329,7 @@ void LBRJointSineOverlayClient::command()
 
     // Combine forces and moments into single vector
     Eigen::VectorXd F_ext_0(6);
-    F_ext_0 << f_ext_0, m_ext_0; \
+    F_ext_0 << f_ext_0, m_ext_0; 
 
     // Write data to files
     File_dt << currentTime << endl;
