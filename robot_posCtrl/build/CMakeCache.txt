@@ -215,11 +215,17 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Explicit-cpp library
+EXPLICIT_CPP_LIBRARY:STRING=/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/Explicit-cpp/lib/libExplicit-cpp.so
+
 //The directory containing a CMake configuration file for Eigen3.
 Eigen3_DIR:PATH=/usr/share/eigen3/cmake
 
 //FRI library
 FRI_LIBRARY:STRING=/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/myFRIClient/lib/libFRIClient.a
+
+//FTSensor library
+SENSOR_LIBRARY:STRING=/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/FTSensor/lib/libFTSensor.so
 
 //Value Computed by CMake
 Sit2Stand_BINARY_DIR:STATIC=/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/build

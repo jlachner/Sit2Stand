@@ -109,6 +109,8 @@ Debug/Sit2Stand: CMakeFiles/Sit2Stand.dir/LBRJointSineOverlayApp.cpp.o
 Debug/Sit2Stand: CMakeFiles/Sit2Stand.dir/LBRJointSineOverlayClient.cpp.o
 Debug/Sit2Stand: CMakeFiles/Sit2Stand.dir/build.make
 Debug/Sit2Stand: /home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/myFRIClient/lib/libFRIClient.a
+Debug/Sit2Stand: /home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/FTSensor/lib/libFTSensor.so
+Debug/Sit2Stand: /home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/Explicit-cpp/lib/libExplicit-cpp.so
 Debug/Sit2Stand: CMakeFiles/Sit2Stand.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Debug/Sit2Stand"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Sit2Stand.dir/link.txt --verbose=$(VERBOSE)

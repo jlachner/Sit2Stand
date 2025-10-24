@@ -67,6 +67,7 @@ cost of any service and repair.
 #include <vector>
 #include <cstring>
 #include <chrono>
+#include "exp_robots.h"
 
 
 using Clock = std::chrono::high_resolution_clock;
@@ -150,16 +151,84 @@ Eigen::MatrixXd readCSV( const string& filename )
 
 
 //******************************************************************************
+std::ofstream openTxtFile(const std::string& basePath) {
+    std::string filename = basePath;
+    if (filename.size() < 4 || filename.substr(filename.size() - 4) != ".txt") {
+        filename += ".txt";
+    }
+    std::ofstream file(filename);
+    if (!file) {
+        throw std::runtime_error("Could not open file: " + filename);
+    }
+    return file;
+}
+
+
+//******************************************************************************
 LBRJointSineOverlayClient::LBRJointSineOverlayClient()
     : _index(0)
 {
+
+    // Time variables for control loop
+    currentTime = 0;
+    sampleTime = 0;
+
+    // Initialize joint position
+    qInitial[0] = -85.39 * M_PI/180;
+    qInitial[1] = 104.49 * M_PI/180;
+    qInitial[2] = 26.71 * M_PI/180;
+    qInitial[3] = -61.70 * M_PI/180;
+    qInitial[4] = 67.68 * M_PI/180;
+    qInitial[5] = 69.05 * M_PI/180;
+    qInitial[6] = 21.81 * M_PI/180;
+
+    // Initialize joint positions
+    for( int i=0; i < myLBR->nq; i++ )
+    {
+        qCurr[i] = qInitial[i];
+        qOld[i] = qInitial[i];
+    }
+
+    // Use Explicit-cpp to create your robot
+    myLBR = new iiwa14(1, "Dwight");
+    myLBR->init( );
+
+    q  = Eigen::VectorXd::Zero( myLBR->nq );
+    dq  = Eigen::VectorXd::Zero( myLBR->nq );
+
+    pointPosition = Eigen::Vector3d( 0.0, 0.0, 0.0722 );              // FT-Sensor plate + tool offset 72.2 mm -> 0.0722 m
+    H = Eigen::MatrixXd::Zero( 4, 4 );
+
+    // ************************************************************
+    // INCLUDE FT-SENSOR
+    // ************************************************************
+    // Weight: 0.2kg (plate) + 0.255kg (sensor) = 0.455kg
+
+    f_ext_ee = Eigen::VectorXd::Zero( 3 );
+    m_ext_ee = Eigen::VectorXd::Zero( 3 );
+
+    AtiForceTorqueSensor ftSensor("172.31.1.1");
+
+    printf( "Force Sensor Activated. \n\n" );
+
+    // ************************************************************
+    // Store data
+    // ************************************************************
+
+    File_dt     = openTxtFile("/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/prints/File_dt");
+    File_q      = openTxtFile("/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/prints/File_q");
+    File_dq     = openTxtFile("/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/prints/File_dq");
+    File_FExt   = openTxtFile("/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/prints/File_FExt");
+
 
     // ************************************************************
     // Initial print
     // ************************************************************
 
-    printf( "LBR iiwa initialised. Ready to rumble! \n\n" );
-
+    printf( "Exp[licit](c)-cpp-FRI, https://explicit-robotics.github.io \n\n" );
+    printf( "Robot '" );
+    printf( "%s", myLBR->Name );
+    printf( "' initialised. Ready to rumble! \n\n" );
 
     cout << "Loading joint position CSV data..." << endl;
 
@@ -175,6 +244,13 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
 //******************************************************************************
 LBRJointSineOverlayClient::~LBRJointSineOverlayClient()
 {
+
+    File_dt.close();
+    File_q.close();
+    File_dq.close();
+    File_FExt.close();
+    delete this->ftSensor;
+
 }
       
 //******************************************************************************
@@ -186,6 +262,7 @@ void LBRJointSineOverlayClient::onStateChange(ESessionState oldState, ESessionSt
    {
       case MONITORING_READY:
       {
+        sampleTime = robotState().getSampleTime();
         _index = 0;  // Reset to start of trajectory
          break;
       }
@@ -204,10 +281,25 @@ void LBRJointSineOverlayClient::command()
     if (_index >= _N_data)
         _index = _N_data - 1;
 
-    double jointPos[LBRState::NUMBER_OF_JOINTS];
-    memcpy(jointPos, robotState().getIpoJointPosition(), sizeof(jointPos));
+    memcpy( qOld, qCurr, 7*sizeof(double) );
+    memcpy( qCurr, robotState().getIpoJointPosition(), 7*sizeof(double) );
+
+    for (int i=0; i < myLBR->nq; i++)
+    {
+        q[i] = qCurr[i];
+    }
+
+    for (int i=0; i < 7; i++)
+    {
+        dq[i] = (qCurr[i] - qOld[i]) / sampleTime;
+    }
+
+    // Get Forward Kinematics and extract rotation matrix
+    H = myLBR->getForwardKinematics(q, 7, pointPosition);
+    Eigen::Matrix3d R = H.block<3,3>(0,0);
 
     // Overwrite all joints from CSV data
+    double jointPos[LBRState::NUMBER_OF_JOINTS];
     for (int i = 0; i < LBRState::NUMBER_OF_JOINTS; i++)
     {
         jointPos[i] = _q_data(_index, i);
@@ -219,6 +311,34 @@ void LBRJointSineOverlayClient::command()
     if (_index < _N_data)
         _index++;
 
+    // Read Force-Torque Sensor
+    f_sens_ee = ftSensor->Acquire();
+
+    // Assign sensor values to Eigen vectors
+    f_ext_ee(0) = f_sens_ee[0];
+    f_ext_ee(1) = f_sens_ee[1];
+    f_ext_ee(2) = f_sens_ee[2];
+
+    m_ext_ee(0) = f_sens_ee[3];
+    m_ext_ee(1) = f_sens_ee[4];
+    m_ext_ee(2) = f_sens_ee[5];
+
+    // Transform forces and moments to base frame
+    Eigen::Vector3d f_ext_0 = R * f_ext_ee;
+    Eigen::Vector3d m_ext_0 = R * m_ext_ee;
+
+    // Combine forces and moments into single vector
+    Eigen::VectorXd F_ext_0(6);
+    F_ext_0 << f_ext_0, m_ext_0; \
+
+    // Write data to files
+    File_dt << currentTime << endl;
+    File_q << q << endl;
+    File_dq << dq << endl;
+    File_FExt << F_ext_0 << endl;
+
+    // Update time
+    currentTime = currentTime + sampleTime;
 
 }
 

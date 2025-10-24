@@ -63,6 +63,13 @@ cost of any service and repair.
 #include "friLBRClient.h"
 #include <Eigen/Dense>
 
+#include <fstream>
+
+#include "exp_robots.h"
+#include "exp_trajs.h"
+
+#include "AtiForceTorqueSensor.h"
+
 
 /**
  * \brief Test client that can overlay interpolator joint positions with sine waves.
@@ -97,9 +104,37 @@ public:
       
 private:
 
+   double currentTime;
+   double sampleTime;
+
+   double qInitial[7];
+   double qCurr[7];
+   double qOld[7];
+
    Eigen::MatrixXd _q_data;   // CSV joint trajectory data (N x 7)
    int _N_data;               // Number of time steps
    int _index;                // Current timestep index
+
+   // Create iiwa as child of primitive class
+   iiwa14 *myLBR;
+   Eigen::VectorXd q;
+   Eigen::VectorXd dq;
+   Eigen::Vector3d pointPosition;
+   Eigen::MatrixXd H;
+
+   // Force-Torque Sensor
+   AtiForceTorqueSensor *ftSensor;
+   double* f_sens_ee;
+   Eigen::VectorXd f_ext_ee;
+   Eigen::VectorXd m_ext_ee;
+   Eigen::VectorXd f_ext_0;
+   Eigen::VectorXd m_ext_0;
+   
+   // Text files
+   std::ofstream File_dt;
+   std::ofstream File_q;
+   std::ofstream File_dq;
+   std::ofstream File_FExt;
    
 };
 

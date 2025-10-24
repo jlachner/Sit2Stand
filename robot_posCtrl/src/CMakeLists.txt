@@ -18,6 +18,9 @@ find_package(Eigen3 REQUIRED)
 set(includeDir
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../Explicit-FRI/Libraries/myFRIClient/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../Explicit-FRI/Libraries/FTSensor/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../Explicit-FRI/Libraries/Explicit-cpp/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../Explicit-FRI/Libraries/Explicit-cpp/Eigen
   ${EIGEN3_INCLUDE_DIR}
 )
 
@@ -43,10 +46,15 @@ add_executable(${PROJECT_NAME} ${sourceFiles} ${headerFiles})
 
 # Link FRIClient static library
 set(FRI_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/../../../Explicit-FRI/Libraries/myFRIClient/lib/libFRIClient.a" CACHE STRING "FRI library")
+set(SENSOR_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/../../../Explicit-FRI/Libraries/FTSensor/lib/libFTSensor.so" CACHE STRING "FTSensor library")
+set(EXPLICIT_CPP_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/../../../Explicit-FRI/Libraries/Explicit-cpp/lib/libExplicit-cpp.so" CACHE STRING "Explicit-cpp library")
+
 
 target_link_libraries(${PROJECT_NAME}
   ${FRI_LIBRARY}
   ${Boost_LIBRARIES}
+  ${SENSOR_LIBRARY}
+  ${EXPLICIT_CPP_LIBRARY}
   Eigen3::Eigen
 )
 

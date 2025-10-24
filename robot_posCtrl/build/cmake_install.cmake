@@ -72,6 +72,10 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
   file(INSTALL DESTINATION "/usr/local/application" TYPE EXECUTABLE FILES "/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/build/Debug/Sit2Stand")
   if(EXISTS "$ENV{DESTDIR}/usr/local/application/Sit2Stand" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}/usr/local/application/Sit2Stand")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}/usr/local/application/Sit2Stand"
+         OLD_RPATH "/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/FTSensor/lib:/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/Explicit-cpp/lib:"
+         NEW_RPATH "")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/usr/local/application/Sit2Stand")
     endif()

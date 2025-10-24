@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src -I/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/myFRIClient/include -isystem /usr/include/eigen3
+CXX_INCLUDES = -I/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src -I/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/myFRIClient/include -I/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/FTSensor/include -I/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/Explicit-cpp/include -I/home/iiwaplayground/Documents/GitHub/Sit2Stand/robot_posCtrl/src/../../../Explicit-FRI/Libraries/Explicit-cpp/Eigen -isystem /usr/include/eigen3
 
 CXX_FLAGS = -g
 
