@@ -6,7 +6,7 @@ MIT, Department of Mechanical Engineering, USA
 
 ### Reset F/T-Sensor
 - Run "Bias" in:
-http://172.31.1.1/rundata.html
+http://172.31.1.1/rundata.htm
 
 ### Build · Debug · Run (tested for Linux + VS Code)
 
