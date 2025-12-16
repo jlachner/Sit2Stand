@@ -24,7 +24,7 @@ Nt = round(T_lin / dt);
 t_record = linspace(0, T_lin, Nt);
 
 % Initial joint configuration
-q = deg2rad([-85.39, 104.49, 26.71, -61.70, 67.68, 69.05, 21.81]');  
+q = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]');  
 H0 = robot.getForwardKinematics(q); 
 R0 = H0(1:3, 1:3);                      % Starting orientation    
 p0 = H0(1:3, 4);                         % Starting EE position
