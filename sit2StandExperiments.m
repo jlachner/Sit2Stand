@@ -20,8 +20,7 @@ omega = 2 * pi / T_lin;
 % Timing
 dt = 0.005;                         
 Nt = round(T_lin / dt);
-%Nt = 1;
-t_record = linspace(0, T_lin, Nt);
+t_record = linspace(0, 3 * T_lin, 3 * Nt);
 
 % Initial joint configuration
 q = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]');  
@@ -50,16 +49,66 @@ Jv = J(1:3, :);                          % translational velocities
 
 % Preallocate
 z_des_ee = 0;
-q_record = zeros(robot.nq, Nt);
-p_traj = zeros(3, Nt);
-p_des_traj = zeros(3, Nt);
+q_record = zeros(robot.nq, 3 * Nt);
+p_traj = zeros(3, 3 * Nt);
+p_des_traj = zeros(3, 3 * Nt);
 
 % Loop over time steps
+% 1: Stand-to-sit (pull on transmission cable)
 for i = 1:Nt
     t = t_record(i);
     
     % Move along -z in ee coords
     p_des_ee(3) = p_des_ee_ini(3) - A * sin( 0.25 * omega * t );
+    p_des = R0' * p_des_ee;
+    p_des_traj(:, i) = p_des;
+
+    % Current EE pose
+    H = robot.getForwardKinematics(q);
+    p = H(1:3, 4);
+    p_traj(:, i) = p;
+
+    % Compute twist (task-space velocity)
+    dp = (p_des - p) / dt;
+    w = zeros(3,1);  % fixed orientation
+    twist = [dp; w];
+
+    % Inverse Kinematics: least-square dynamically consistent
+    J = robot.getHybridJacobian(q);
+    M = robot.getMassMatrix(q);
+    M_inv = M \ eye(size(M));
+    k = 0.01;
+    Lambda_inv = J * M_inv * J' + k^2 * eye(6);
+    Lambda = Lambda_inv \ eye(6);
+    J_inv = M_inv * J' * Lambda;
+
+    dq = J_inv * twist;
+    q = q + dq * dt;
+
+    q_record(:, i) = q;
+    t = t + dt;
+
+    robot.updateKinematics(q);
+    anim.update(t);
+end
+
+% 2: Hold position for Nt time steps
+for i = Nt+1:2*Nt
+    t = t_record(i);
+    q_record(:, i) = q_record(:, Nt);
+    t = t + dt;
+
+    robot.updateKinematics(q);
+    anim.update(t);
+end
+
+
+% 3: Sit-to-stand (release transmission cable)
+for i = 2*Nt+1:3*Nt
+    t = t_record(i);
+    
+    % Move along -z in ee coords
+    p_des_ee(3) = p_des_ee_ini(3) - A * sin(0.25 * omega * (t - t_record(Nt))) ; % Nt is the length of the pause
     p_des = R0' * p_des_ee;
     p_des_traj(:, i) = p_des;
 
