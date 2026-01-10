@@ -1,18 +1,6 @@
-%% Clean up
-clear; clc; close all;
-
 %% Setup
 robot = iiwa14('high');
 robot.init();
-
-% % Initial joint configuration
-% q0 = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]');  
-% H0 = robot.getForwardKinematics(q0); 
-% R0 = H0(1:3, 1:3);  % Starting orientation    
-% p0 = H0(1:3, 4);    % Starting EE position
-% p_des = p0;
-% p_des_ee_ini = R0 * p_des;
-% p_des_ee = p_des_ee_ini;
 
 % Plotting settings
 sz_label = 18;
@@ -20,7 +8,7 @@ sz_title = 20;
 sz_axes = 16;
 
 % Load experimental data
-folder = 'robot_posCtrl/prints/2025-12-17_Sit2StandCable_04/'; % Si2St
+folder = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_01/'; % Si2St
 % folder = 'robot_posCtrl/prints/2025-12-17_Stand2SitCable_02/'; %St2Si
 q_exp = load(strcat(folder, 'File_q.txt'));
 dq_exp = load(strcat(folder, 'File_dq.txt'));
@@ -111,7 +99,7 @@ hold on;
 plot(x_sim, F_sim, 'LineWidth', 2);
 
 %%
-% Example to get task space velocity of text file
-dq_exp = [-0.39, 0.49, 0.71, -0.70, 0.68, 0.05, 0.81]';                % Replace this with the joint velocities of your text files
-J_test = robot.getHybridJacobian(q, 'bodyID', 7, 'pointPos', pointPos );
-dx = J_test * dq_exp;
+% % Example to get task space velocity of text file
+% dq_exp = [-0.39, 0.49, 0.71, -0.70, 0.68, 0.05, 0.81]';                % Replace this with the joint velocities of your text files
+% J_test = robot.getHybridJacobian(q, 'bodyID', 7, 'pointPos', pointPos );
+% dx = J_test * dq_exp;
