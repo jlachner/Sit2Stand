@@ -173,14 +173,29 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
     currentTime = 0;
     sampleTime = 0;
 
+    // Choose sit-to-stand or stand-to-sit trajectory; EDIT here
+    profile = sit2stand; 
+
     // Initialize joint position; EDIT here for different initial poses
-    qInitial[0] = -86.91 * M_PI/180;
-    qInitial[1] = 106.55 * M_PI/180;
-    qInitial[2] = 26.71 * M_PI/180;
-    qInitial[3] = -58.99 * M_PI/180;
-    qInitial[4] = 65.13 * M_PI/180;
-    qInitial[5] = 70.34 * M_PI/180;
-    qInitial[6] = 22.97 * M_PI/180;
+    if profile == sit2stand:
+        // aligned with sit-to-stand groove:
+        qInitial[0] = -86.98 * M_PI/180;
+        qInitial[1] = 105.51 * M_PI/180;
+        qInitial[2] = 26.71 * M_PI/180;
+        qInitial[3] = -60.28 * M_PI/180;
+        qInitial[4] = 65.55 * M_PI/180;
+        qInitial[5] = 69.99 * M_PI/180;
+        qInitial[6] = 22.75 * M_PI/180;
+
+    else if profile == stand2sit:
+        // aligned with stand-to-sit groove:
+        qInitial[0] = -86.91 * M_PI/180;
+        qInitial[1] = 106.55 * M_PI/180;
+        qInitial[2] = 26.71 * M_PI/180;
+        qInitial[3] = -58.99 * M_PI/180;
+        qInitial[4] = 65.13 * M_PI/180;
+        qInitial[5] = 70.34 * M_PI/180;
+        qInitial[6] = 22.97 * M_PI/180;
 
     // Initialize joint positions
     for( int i=0; i < myLBR->nq; i++ )
@@ -233,7 +248,10 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
     cout << "Loading joint position CSV data..." << endl;
 
     // Update with your CSV file path (relative or absolute); EDIT _q_data to follow different trajectory
-    _q_data = readCSV("../data/q_linear_z.csv").transpose();  // Now: N x 7
+    if profile == sit2stand:
+        _q_data = readCSV("../data/q_linear_z_sit_to_stand.csv").transpose();  // Now: N x 7
+    else if profile == stand2sit:
+        _q_data = readCSV("../data/q_linear_z_stand_to_sit.csv").transpose();  // Now: N x 7
     _N_data = _q_data.rows();
 
     cout << "Loaded " << _N_data << " trajectory points. \n\n" << endl;
