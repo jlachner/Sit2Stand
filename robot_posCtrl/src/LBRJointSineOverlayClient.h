@@ -107,6 +107,8 @@ private:
    double currentTime;
    double sampleTime;
 
+   // bool sit2stand;
+
    double qInitial[7];
    double qCurr[7];
    double qOld[7];
