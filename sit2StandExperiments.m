@@ -23,7 +23,9 @@ Nt = round(T_lin / dt);
 t_record = linspace(0, 3 * T_lin, 3 * Nt);
 
 % Initial joint configuration
-q = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]');  
+% q = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]'); % stand-to-sit groove aligned
+q = deg2rad([-86.98, 105.51, 26.71, -60.28, 65.55, 69.99, 22.75]'); % sit-to-stand groove aligned
+
 H0 = robot.getForwardKinematics(q); 
 R0 = H0(1:3, 1:3);                      % Starting orientation    
 p0 = H0(1:3, 4);                         % Starting EE position

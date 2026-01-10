@@ -8,7 +8,7 @@ sz_title = 20;
 sz_axes = 16;
 
 % Load experimental data
-folder = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_02/'; % % St2Si
+folder = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % % St2Si
 % folder = 'robot_posCtrl/prints/2025-12-17_Stand2SitCable_02/'; % Si2St
 q_exp = load(strcat(folder, 'File_q.txt'));
 dq_exp = load(strcat(folder, 'File_dq.txt'));
