@@ -8,8 +8,8 @@ sz_title = 20;
 sz_axes = 16;
 
 % Load experimental data
-folder = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_01/'; % Si2St
-% folder = 'robot_posCtrl/prints/2025-12-17_Stand2SitCable_02/'; %St2Si
+folder = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_02/'; % % St2Si
+% folder = 'robot_posCtrl/prints/2025-12-17_Stand2SitCable_02/'; % Si2St
 q_exp = load(strcat(folder, 'File_q.txt'));
 dq_exp = load(strcat(folder, 'File_dq.txt'));
 F_exp = load(strcat(folder, 'File_FExt.txt'));
@@ -34,8 +34,8 @@ figure();
 % plot(t_exp(1:Nt)/t_exp(Nt)*100, flip(F_N(1,1:Nt), 2), 'LineWidth', 2)
 plot(t_exp, F_X, 'LineWidth', 2)
 set(gca, 'FontSize', sz_axes);
-title('Measured Sit-to-Stand Force Profile', 'FontSize', sz_title);
-% title('Measured Stand-to-Sit Force Profile', 'FontSize', sz_title);
+% title('Measured Sit-to-Stand Force Profile', 'FontSize', sz_title);
+title('Measured Stand-to-Sit Force Profile', 'FontSize', sz_title);
 xlabel('Time (s)', 'FontSize', sz_label);
 % xlabel('Stance Percentage (%)', 'FontSize', sz_label);
 ylabel('Cable Tension (N)', 'FontSize', sz_label)
@@ -75,7 +75,8 @@ figure();
 plot(100*X_traj, F_trial, 'LineWidth', 2);
 xlabel('End Effector X-position (cm)')
 ylabel('Cable Tension (N)')
-title('Measured Sit-to-Stand Force Profile (Unwrapping)')
+% title('Measured Sit-to-Stand Force Profile (Unwrapping)')
+title('Measured Stand-to-Sit Force Profile')
 
 %% Import and plot simulated force-displacement profile
 
