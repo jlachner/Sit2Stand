@@ -24,7 +24,7 @@ T_hold = 2;
 N_hold = round (T_hold / dt);
 
 % Line parameters, sit-to-stand
-T_stand = 1.0;          % period for one revolution
+T_stand = 0.5;          % period for one revolution
 omega_stand = 2 * pi / T_stand;
 N_stand = round(T_stand / dt);
 
