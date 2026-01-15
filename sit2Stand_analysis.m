@@ -21,7 +21,7 @@ plt.c_sim = '#3594CC'; % simulation; medium blue
 % stand-to-sit force profiles
 % folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
 folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
-folder.si2st_exp = '2026-01-14_0-5s-duration/';
+folder.si2st_exp = '2026-01-14_0-5s-duration-WD40/';
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force.mat';
 
