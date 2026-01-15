@@ -19,9 +19,9 @@ plt.c_sim = '#3594CC'; % simulation; medium blue
 
 % Specify locations of data for experimental and simulated sit-to-stand and 
 % stand-to-sit force profiles
-folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
+% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
 folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
-% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-13_Federico-sit_04/';
+folder.si2st_exp = '2026-01-14_wall_Si-St_01/';
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force.mat';
 
@@ -84,77 +84,6 @@ writetable(results_st2si, 'results/results_st2si.csv', 'WriteRowNames', true);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Functions
-function x_traj = process_x(p_traj)
-% PROCESS_X Offset and negate end-effector data so that pulling on the 
-% cable results in positive cable displacement, starting from 0. Convert to
-% centimeters.
-
-    x_traj = 100 * p_traj(1, :);
-    x_traj = max(x_traj) - x_traj;
-
-end
-
-function results_table = analysis(sim, F_exp, x_exp)
-% ANALYSIS Analyze force and displacement values at key points: peak 
-% assistance and when seated
-    
-    % Divide experimental data into storage and release phases
-    half_ind = round(length(F_exp)/2);
-    F_stor = F_exp(1:half_ind);
-    x_stor = x_exp(1:half_ind);
-    F_rel = F_exp(half_ind+1:end);
-    x_rel = x_exp(half_ind+1:end);
-
-    % Storage phase
-    [F_peak_stor, x_peak_stor, F_seat_stor, x_seat_stor] = analysis_calcs(F_stor, x_stor);
-
-    % Release phase
-    [F_peak_rel, x_peak_rel, F_seat_rel, x_seat_rel] = analysis_calcs(F_rel, x_rel);
-
-    % Simulated
-    sim.x = 100 * sim.x;
-    [F_peak_sim, x_peak_sim, F_seat_sim, x_seat_sim] = analysis_calcs(sim.F, sim.x);
-
-    % Calculate experimental percent difference from prediction
-    % Storage phase
-    diff_F_peak_stor = (F_peak_sim - F_peak_stor) / F_peak_sim * 100;
-    diff_x_peak_stor = (x_peak_sim - x_peak_stor) / x_peak_sim * 100;
-
-    diff_F_seat_stor = (F_seat_sim - F_seat_stor) / F_seat_sim * 100;
-    diff_x_seat_stor = (x_seat_sim - x_seat_stor) / x_seat_sim * 100;
-
-    % Release phase
-    diff_F_peak_rel = (F_peak_sim - F_peak_rel) / F_peak_sim * 100;
-    diff_x_peak_rel = (x_peak_sim - x_peak_rel) / x_peak_sim * 100;
-
-    diff_F_seat_rel = (F_seat_sim - F_seat_rel) / F_seat_sim * 100;
-    diff_x_seat_rel = (x_seat_sim - x_seat_rel) / x_seat_sim * 100;
-
-    % Store all calculated values in a table
-    results_table = table([F_peak_sim; F_peak_stor; diff_F_peak_stor; F_peak_rel; diff_F_peak_rel], ...
-                          [x_peak_sim; x_peak_stor; diff_x_peak_stor; x_peak_rel; diff_x_peak_rel], ...
-                          [F_seat_sim; F_seat_stor; diff_F_seat_stor; F_seat_rel; diff_F_seat_rel], ...
-                          [x_seat_sim; x_seat_stor; diff_x_seat_stor; x_seat_rel; diff_x_seat_rel], ...
-                          'VariableNames', {'F_peak', 'X_Peak', 'F_Seat', 'X_Seat'}, ...
-                          'RowNames', {'Predicted', 'Measured (Storage)', '% Difference (Storage)', ...
-                          'Measured (Release)', '% Difference (Release)'});
-
-    function [F_peak, x_peak, F_seat, x_seat] = analysis_calcs(F, x)
-    
-        [F_peak, F_peak_ind] = max(F);
-        x_peak = x(F_peak_ind);
-        
-        [F_seat, F_seat_ind] = max([F(1), F(end)]);
-        if F_seat_ind == 1
-            x_seat = x(1);
-        else
-            x_seat = x(end);
-        end
-
-    end
-
-end
-
 function [p_traj, F_mag, t_exp] = q_convert(folder, robot)
 % Q_CONVERT Convert robot joint angles to end effector Cartesian
 % coordinates.
@@ -228,9 +157,9 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     ylim([0, 100])
     
     %% Plot experimental force-displacement profile
-    % Offset and negate end-effector data so that pulling on the cable
-    % results in positive cable displacement, starting from 0.
-    x_traj = max(x_traj) - x_traj;
+    % Offset end-effector data so that pulling on the cable results in 
+    % positive cable displacement, starting from 0.
+    x_traj = x_traj - max(x_traj);
 
     % Normalize trajectory in x-direction to plot against normalized stroke
     % length instead of absolute displacement.
@@ -298,5 +227,76 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     legend('Measured, Storage', 'Measured, Release', 'Predicted', ...
         'Location', 'northwest', 'FontSize', plt.axes)
     ylim([0 100])
+
+end
+
+function x_traj = process_x(p_traj)
+% PROCESS_X Offset and negate end-effector data so that pulling on the 
+% cable results in positive cable displacement, starting from 0. Convert to
+% centimeters.
+
+    x_traj = 100 * p_traj(1, :);
+    x_traj = max(x_traj) - x_traj;
+
+end
+
+function results_table = analysis(sim, F_exp, x_exp)
+% ANALYSIS Analyze force and displacement values at key points: peak 
+% assistance and when seated
+    
+    % Divide experimental data into storage and release phases
+    half_ind = round(length(F_exp)/2);
+    F_stor = F_exp(1:half_ind);
+    x_stor = x_exp(1:half_ind);
+    F_rel = F_exp(half_ind+1:end);
+    x_rel = x_exp(half_ind+1:end);
+
+    % Storage phase
+    [F_peak_stor, x_peak_stor, F_seat_stor, x_seat_stor] = analysis_calcs(F_stor, x_stor);
+
+    % Release phase
+    [F_peak_rel, x_peak_rel, F_seat_rel, x_seat_rel] = analysis_calcs(F_rel, x_rel);
+
+    % Simulated
+    sim.x = 100 * sim.x;
+    [F_peak_sim, x_peak_sim, F_seat_sim, x_seat_sim] = analysis_calcs(sim.F, sim.x);
+
+    % Calculate experimental percent difference from prediction
+    % Storage phase
+    diff_F_peak_stor = (F_peak_sim - F_peak_stor) / F_peak_sim * 100;
+    diff_x_peak_stor = (x_peak_sim - x_peak_stor) / x_peak_sim * 100;
+
+    diff_F_seat_stor = (F_seat_sim - F_seat_stor) / F_seat_sim * 100;
+    diff_x_seat_stor = (x_seat_sim - x_seat_stor) / x_seat_sim * 100;
+
+    % Release phase
+    diff_F_peak_rel = (F_peak_sim - F_peak_rel) / F_peak_sim * 100;
+    diff_x_peak_rel = (x_peak_sim - x_peak_rel) / x_peak_sim * 100;
+
+    diff_F_seat_rel = (F_seat_sim - F_seat_rel) / F_seat_sim * 100;
+    diff_x_seat_rel = (x_seat_sim - x_seat_rel) / x_seat_sim * 100;
+
+    % Store all calculated values in a table
+    results_table = table([F_peak_sim; F_peak_stor; diff_F_peak_stor; F_peak_rel; diff_F_peak_rel], ...
+                          [x_peak_sim; x_peak_stor; diff_x_peak_stor; x_peak_rel; diff_x_peak_rel], ...
+                          [F_seat_sim; F_seat_stor; diff_F_seat_stor; F_seat_rel; diff_F_seat_rel], ...
+                          [x_seat_sim; x_seat_stor; diff_x_seat_stor; x_seat_rel; diff_x_seat_rel], ...
+                          'VariableNames', {'F_peak', 'X_Peak', 'F_Seat', 'X_Seat'}, ...
+                          'RowNames', {'Predicted', 'Measured (Storage)', '% Difference (Storage)', ...
+                          'Measured (Release)', '% Difference (Release)'});
+
+    function [F_peak, x_peak, F_seat, x_seat] = analysis_calcs(F, x)
+    
+        [F_peak, F_peak_ind] = max(F);
+        x_peak = x(F_peak_ind);
+        
+        [F_seat, F_seat_ind] = max([F(1), F(end)]);
+        if F_seat_ind == 1
+            x_seat = x(1);
+        else
+            x_seat = x(end);
+        end
+
+    end
 
 end

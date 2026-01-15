@@ -132,9 +132,8 @@ for i = N_sit + N_hold + 1 : N_tot
     t = t_record(i);
     
     % Move along -z in ee coords
-    % p_des_ee(3) = p_des_ee_ini(3) + A * sin( 0.25 * omega_sit * t_record(N_sit) ) ... % add amplitude of motion after sitting
-    %     + A * sin(0.25 * omega_stand * (t - t_record(N_sit + N_hold) + T_stand / 4)) ; % zero out the time for stand frequency
-    p_des_ee(3) = p_des_ee_ini(3) + A * sin(0.25 * omega_stand * (t - t_record(N_sit + N_hold) + T_stand)) ; %
+    p_des_ee(3) = p_des_ee_ini(3) + A * sin( 0.25 * omega_sit * t_record(N_sit) ) ... % add amplitude of motion after sitting
+        - A * sin(0.25 * omega_stand * (t - t_record(N_sit + N_hold) + N_)) ; % zero out the time for stand frequency
     p_des = R0' * p_des_ee;
     p_des_traj(:, i) = p_des;
 
