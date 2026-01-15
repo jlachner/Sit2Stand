@@ -13,7 +13,7 @@ anim.init();
 anim.attachRobot(robot);
 
 % Line parameters, stand-to-sit
-A = 0.05;           % distance (meters)
+A = 0.20;           % distance (meters)
 T_sit = 2;          % period for one revolution
 omega_sit = 2 * pi / T_sit;
 dt = 0.005;
@@ -24,7 +24,7 @@ T_hold = 2;
 N_hold = round (T_hold / dt);
 
 % Line parameters, sit-to-stand
-T_stand = 0.25;          % period for one revolution
+T_stand = 1.0;          % period for one revolution
 omega_stand = 2 * pi / T_stand;
 N_stand = round(T_stand / dt);
 
