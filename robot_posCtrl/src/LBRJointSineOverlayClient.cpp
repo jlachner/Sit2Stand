@@ -177,15 +177,24 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
     // sit2stand = true; 
 
     // Initialize joint position; EDIT here for different initial poses
+   // table against wall, aligned with sit-to-stand groove:
+        qInitial[0] = -101.06 * M_PI/180;
+        qInitial[1] = 104.70 * M_PI/180;
+        qInitial[2] = -0.01 * M_PI/180;
+        qInitial[3] = -53.22 * M_PI/180;
+        qInitial[4] = -113.81 * M_PI/180;
+        qInitial[5] = 81.67 * M_PI/180;
+        qInitial[6] = -18.19 * M_PI/180;
+
     // if (sit2stand) {
-    // aligned with sit-to-stand groove:
-        qInitial[0] = -86.98 * M_PI/180;
-        qInitial[1] = 105.51 * M_PI/180;
-        qInitial[2] = 26.71 * M_PI/180;
-        qInitial[3] = -60.28 * M_PI/180;
-        qInitial[4] = 65.55 * M_PI/180;
-        qInitial[5] = 69.99 * M_PI/180;
-        qInitial[6] = 22.75 * M_PI/180;
+    // // aligned with sit-to-stand groove:
+    //     qInitial[0] = -86.98 * M_PI/180;
+    //     qInitial[1] = 105.51 * M_PI/180;
+    //     qInitial[2] = 26.71 * M_PI/180;
+    //     qInitial[3] = -60.28 * M_PI/180;
+    //     qInitial[4] = 65.55 * M_PI/180;
+    //     qInitial[5] = 69.99 * M_PI/180;
+    //     qInitial[6] = 22.75 * M_PI/180;
     // }
     // else {
         // // aligned with stand-to-sit groove:
