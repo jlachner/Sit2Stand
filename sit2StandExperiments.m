@@ -13,7 +13,7 @@ anim.init();
 anim.attachRobot(robot);
 
 % Line parameters
-A = 0.0588;           % distance (meters)
+A = 0.05;           % distance (meters)
 T_lin = 2;          % period for one revolution
 omega = 2 * pi / T_lin;
 
@@ -24,7 +24,8 @@ t_record = linspace(0, 3 * T_lin, 3 * Nt);
 
 % Initial joint configuration
 % q = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]'); % stand-to-sit groove aligned
-q = deg2rad([-86.98, 105.51, 26.71, -60.28, 65.55, 69.99, 22.75]'); % sit-to-stand groove aligned
+% q = deg2rad([-86.98, 105.51, 26.71, -60.28, 65.55, 69.99, 22.75]'); % sit-to-stand groove aligned
+q = deg2rad([-101.06, 104.70, -0.01, -53.22, -113.81, 81.67, -18.19]'); % table against wall, sit-to-stand groove aligned
 
 H0 = robot.getForwardKinematics(q); 
 R0 = H0(1:3, 1:3);                      % Starting orientation    
@@ -60,8 +61,8 @@ p_des_traj = zeros(3, 3 * Nt);
 for i = 1:Nt
     t = t_record(i);
     
-    % Move along -z in ee coords
-    p_des_ee(3) = p_des_ee_ini(3) - A * sin( 0.25 * omega * t );
+    % Move along +z in ee coords
+    p_des_ee(3) = p_des_ee_ini(3) + A * sin( 0.25 * omega * t );
     p_des = R0' * p_des_ee;
     p_des_traj(:, i) = p_des;
 
@@ -116,7 +117,7 @@ for i = 2*Nt+1:3*Nt
     t = t_record(i);
     
     % Move along -z in ee coords
-    p_des_ee(3) = p_des_ee_ini(3) - A * sin(0.25 * omega * (t - t_record(Nt))) ; % Nt is the length of the pause
+    p_des_ee(3) = p_des_ee_ini(3) + A * sin(0.25 * omega * (t - t_record(Nt))) ; % Nt is the length of the pause
     p_des = R0' * p_des_ee;
     p_des_traj(:, i) = p_des;
 

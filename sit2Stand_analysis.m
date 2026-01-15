@@ -19,8 +19,9 @@ plt.c_sim = '#3594CC'; % simulation; medium blue
 
 % Specify locations of data for experimental and simulated sit-to-stand and 
 % stand-to-sit force profiles
-folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/';
-folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/';
+folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
+folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
+% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-13_Federico-sit_04/';
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force.mat';
 
