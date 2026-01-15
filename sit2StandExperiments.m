@@ -24,7 +24,7 @@ T_hold = 2;
 N_hold = round (T_hold / dt);
 
 % Line parameters, sit-to-stand
-T_stand = 1.5;          % period for one revolution
+T_stand = 1.0;          % period for one revolution
 omega_stand = 2 * pi / T_stand;
 N_stand = round(T_stand / dt);
 
@@ -77,7 +77,7 @@ for i = 1:N_sit
     t = t_record(i);
     
     % Move along +z in ee coords
-    p_des_ee(3) = p_des_ee_ini(3) + A * sin( 0.25 * omega_sit * t );
+    p_des_ee(3) = p_des_ee_ini(3) + A / 2 * (1 - cos( 0.5 * omega_sit * t ));
     p_des = R0' * p_des_ee;
     p_des_traj(:, i) = p_des;
 
@@ -134,7 +134,7 @@ for i = N_sit + N_hold + 1 : N_tot
     % Move along -z in ee coords
     % p_des_ee(3) = p_des_ee_ini(3) + A * sin( 0.25 * omega_sit * t_record(N_sit) ) ... % add amplitude of motion after sitting
     %     + A * sin(0.25 * omega_stand * (t - t_record(N_sit + N_hold) + T_stand / 4)) ; % zero out the time for stand frequency
-    p_des_ee(3) = p_des_ee_ini(3) + A * sin(0.25 * omega_stand * (t - t_record(N_sit + N_hold) + T_stand)) ; %
+    p_des_ee(3) = p_des_ee_ini(3) + A / 2 * (1 - cos(0.5 * omega_stand * (t - t_record(N_sit + N_hold) + T_stand))) ; %
     p_des = R0' * p_des_ee;
     p_des_traj(:, i) = p_des;
 
