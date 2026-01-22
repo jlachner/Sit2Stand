@@ -40,7 +40,8 @@ t_record = linspace(0, T_tot, N_tot);
 % Initial joint configuration
 % q = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]'); % table freestanding, stand-to-sit groove aligned
 % q = deg2rad([-86.98, 105.51, 26.71, -60.28, 65.55, 69.99, 22.75]'); % table freestanding, sit-to-stand groove aligned
-q = deg2rad([-101.06, 104.70, -0.01, -53.22, -113.81, 81.67, -18.19]'); % table against wall, sit-to-stand groove aligned
+% q = deg2rad([-101.06, 104.70, -0.01, -53.22, -113.81, 81.67, -18.19]'); % table against wall, sit-to-stand groove aligned
+q = deg2rad([-97.50, 102.43, -0.01, -63.26, -111.18, 85.67, -11.39]'); % table against wall, spring jig clamped to table, sit-to-stand groove aligned
 
 H0 = robot.getForwardKinematics(q); 
 R0 = H0(1:3, 1:3);                      % Starting orientation    
