@@ -20,11 +20,11 @@ dt = 0.005;
 N_sit = round(T_sit / dt);
 
 % "Hold" time before release
-T_hold = 2.0;
+T_hold = 0;
 N_hold = round (T_hold / dt);
 
 % Line parameters, sit-to-stand
-T_stand = 4.0;      % period for one revolution
+T_stand = 2.0;      % period for one revolution
 omega_stand = 2 * pi / T_stand;
 N_stand = round(T_stand / dt);
 

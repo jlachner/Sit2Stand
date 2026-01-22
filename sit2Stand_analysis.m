@@ -19,11 +19,11 @@ plt.c_sim = '#3594CC'; % simulation; medium blue
 
 % Specify locations of data for experimental and simulated sit-to-stand and 
 % stand-to-sit force profiles
-folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
-folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
-% folder.si2st_exp = '2026-01-14_wall_Si-St_01/';
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force.mat';
+% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
+folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
+folder.si2st_exp = 'robot_posCtrl/prints/2026-01-22_4-0s-duration/';
 
 % Load experimental joint and force data and convert to Cartesian space
 [p_traj_si2st, F_si2st, t_si2st] = q_convert(folder.si2st_exp, robot); % Si2St
@@ -166,6 +166,7 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     % Offset end-effector data so that pulling on the cable results in 
     % positive cable displacement, starting from 0.
     % x_traj = x_traj - max(x_traj);
+    x_traj = max(x_traj) - x_traj;
 
     % Normalize trajectory in x-direction to plot against normalized stroke
     % length instead of absolute displacement.
