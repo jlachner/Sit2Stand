@@ -13,18 +13,18 @@ anim.init();
 anim.attachRobot(robot);
 
 % Line parameters, stand-to-sit
-A = 0.20;           % distance (meters)
-T_sit = 2;          % period for one revolution
+A = 0.05;           % distance (meters)
+T_sit = 2.0;        % period for one revolution
 omega_sit = 2 * pi / T_sit;
 dt = 0.005;
 N_sit = round(T_sit / dt);
 
 % "Hold" time before release
-T_hold = 2;
+T_hold = 2.0;
 N_hold = round (T_hold / dt);
 
 % Line parameters, sit-to-stand
-T_stand = 1.0;          % period for one revolution
+T_stand = 4.0;      % period for one revolution
 omega_stand = 2 * pi / T_stand;
 N_stand = round(T_stand / dt);
 
@@ -38,8 +38,8 @@ N_tot = N_sit + N_hold + N_stand;
 t_record = linspace(0, T_tot, N_tot);
 
 % Initial joint configuration
-% q = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]'); % stand-to-sit groove aligned
-% q = deg2rad([-86.98, 105.51, 26.71, -60.28, 65.55, 69.99, 22.75]'); % sit-to-stand groove aligned
+% q = deg2rad([-86.91, 106.55, 26.71, -58.99, 65.13, 70.34, 22.97]'); % table freestanding, stand-to-sit groove aligned
+% q = deg2rad([-86.98, 105.51, 26.71, -60.28, 65.55, 69.99, 22.75]'); % table freestanding, sit-to-stand groove aligned
 q = deg2rad([-101.06, 104.70, -0.01, -53.22, -113.81, 81.67, -18.19]'); % table against wall, sit-to-stand groove aligned
 
 H0 = robot.getForwardKinematics(q); 

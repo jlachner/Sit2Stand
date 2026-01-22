@@ -7,9 +7,9 @@ robot.init();
 
 % Plot settings
 plt = struct;
-plt.label = 18;
+plt.label = 22;
 plt.title = 20;
-plt.axes = 16;
+plt.axes = 18;
 plt.lwidth = 4;
 plt.c_stor = '#298C8C'; % storing energy; teal
 plt.c_rel = '#F1A226'; % releasing energy; gold
@@ -19,9 +19,9 @@ plt.c_sim = '#3594CC'; % simulation; medium blue
 
 % Specify locations of data for experimental and simulated sit-to-stand and 
 % stand-to-sit force profiles
-% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
+folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
 folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
-folder.si2st_exp = '2026-01-14_spring-test-20cm_01/';
+% folder.si2st_exp = '2026-01-14_wall_Si-St_01/';
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force.mat';
 
@@ -36,6 +36,11 @@ folder.st2si_sim = 'simulation_data/st2si_force.mat';
 sim_si2st = load(folder.si2st_sim);
 sim_st2si = load(folder.st2si_sim);
 
+% Make x go from 0 at sitting to full stroke at standing
+sim_st2si.x = max(sim_st2si.x) - sim_st2si.x;
+sim_si2st.x = max(sim_si2st.x) - sim_si2st.x;
+
+%{
 % Force vs. stance percentage
 figure();
 plot(sim_st2si.pct, sim_st2si.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_stor)
@@ -60,7 +65,8 @@ ylabel('Cable Tension (N)', 'FontSize', plt.label)
 % title('Simulated Sit-to-Stand and Stand-to-Sit Force Profiles', ...
 %     'FontSize', plt.title)
 legend('Stand-to-Sit (Storage)', 'Sit-to-Stand (Release)', ...
-    'Location', 'northwest', 'FontSize', plt.axes)
+    'Location', 'northeast', 'FontSize', plt.axes)
+%}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -159,7 +165,7 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     %% Plot experimental force-displacement profile
     % Offset end-effector data so that pulling on the cable results in 
     % positive cable displacement, starting from 0.
-    x_traj = x_traj - max(x_traj);
+    % x_traj = x_traj - max(x_traj);
 
     % Normalize trajectory in x-direction to plot against normalized stroke
     % length instead of absolute displacement.
@@ -194,6 +200,9 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
         sim = load(folder.st2si_sim);
     end
     
+    % make x go from 0 at sitting to full stroke at standing
+    sim.x = max(sim.x) - sim.x;
+
     % Convert simulated displacement to centimeters
     sim.x = 100 * sim.x;
 
@@ -214,7 +223,7 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
         'Color', plt.c_stor); % plot in storage color
     hold on;
     plot(x_trial(half_ind+1:end), F_trial(half_ind+1:end), 'LineWidth', plt.lwidth, ...
-        'Color', plt.c_rel); % plot in storage color
+        'Color', plt.c_rel); % plot in release color
     % plot(x_trial, F_trial, 'LineWidth', plt.lwidth, 'Color', plt.c_rel)
     % hold on;
     plot(sim.x, sim.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_sim);
@@ -225,7 +234,7 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     % title(['Measured and Predicted ', profile_name, ' Force Profiles'], ...
     %     'FontSize', plt.title)
     legend('Measured, Storage', 'Measured, Release', 'Predicted', ...
-        'Location', 'northwest', 'FontSize', plt.axes)
+        'Location', 'northeast', 'FontSize', plt.axes)
     ylim([0 100])
 
 end

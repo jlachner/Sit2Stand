@@ -4,9 +4,22 @@ close all; clear; clc;
 % Plot settings
 plt = struct;
 plt.label = 18;
+plt.legend = 16;
 plt.title = 20;
 plt.axes = 16;
 plt.lwidth = 4;
+
+% plt.label = 10;
+% plt.legend = 8;
+% plt.title = 12;
+% plt.axes = 8;
+% plt.lwidth = 2;
+
+% plt.label = 10*2;
+% plt.legend = 8*2;
+% plt.title = 12*2;
+% plt.axes = 8*2;
+% plt.lwidth = 2;
 
 plt.c_ankle = [42 191 117]/255; % ankle angle; light green
 plt.c_knee = [116 42 191]/255; % knee angle; purple
@@ -22,6 +35,9 @@ plt.c_stor_cam = [94 94 94]/255; % storage cam color; dark gray
 
 plt.mkr = '.';
 plt.sz = 150;
+
+% plt.w = 3.25 * 72 * 2;
+% plt.h = 2.3 * 72 * 2;
 
 %% Figure: Joint Angles (Adapted from Chugo et al. 2006)
 % Import extracted data.
@@ -61,7 +77,7 @@ set(gca, 'FontSize', plt.axes)
 xlabel('Draw Length (in.)', 'FontSize', plt.label)
 ylabel('Draw Load (lbf)', 'FontSize', plt.label)
 % title('Bow Force-Displacement Profiles', 'FontSize', plt.title)
-legend('Compound Bow', 'Straight Bow', 'FontSize', plt.label, 'Location', 'northwest')
+legend('Compound Bow', 'Straight Bow', 'FontSize', plt.legend, 'Location', 'northwest')
 
 %% Figure: Desired Force Trajectories
 
@@ -76,36 +92,53 @@ F_st2si = [0, 20, 50,   37.5, 22.5, 10, 0];
 E_st2si = cumtrapz(x_st2si, F_st2si);
 
 figure();
+% figure('Position', [500, 500, plt.w plt.h]);
 plot(x_st2si, F_st2si, 'LineWidth', plt.lwidth, 'Color', plt.c_stor)
 hold on;
 plot(x_si2st, F_si2st, 'LineWidth', plt.lwidth, 'Color', plt.c_rel)
 set(gca, 'FontSize', plt.axes)
 xlabel('Stance Percentage (%)', 'FontSize', plt.label)
 ylabel('Cable Tension (N)', 'FontSize', plt.label)
-legend('Stand-to-Sit (Energy Storage)', 'Sit-to-Stand (Energy Release)', ...
-    'FontSize', plt.label, 'Location', 'northeast')
+% legend('Stand-to-Sit (Energy Storage)', 'Sit-to-Stand (Energy Release)', ...
+%     'FontSize', plt.label, 'Location', 'northeast')
+legend('St-Si (Energy Storage)', 'Si-St (Energy Release)', ...
+    'FontSize', plt.legend, 'Location', 'northeast')
 
 %% Figure: Generated Cam Shapes
+% plt.label = 27;
+% plt.axes = 24;
+% plt.legend = 24;
+
 
 % Import sit-to-stand cam text files
 cam_pts_si2st = load('simulation_data/inner_63.txt');
 cam_pts_outer = load('simulation_data/outer_63.txt');
+cam_pts_st2si = load('simulation_data/st2si_63.txt');
 
 % Convert points to centimeters
 cam_pts_si2st = cam_pts_si2st/10;
 cam_pts_outer = cam_pts_outer/10;
+cam_pts_st2si = cam_pts_st2si/10;
+
+plt.alpha = 1;
 
 figure();
 scatter(cam_pts_outer(:,1), cam_pts_outer(:,2), plt.sz, plt.c_stor_cam, plt.mkr)
 hold on;
-scatter(cam_pts_si2st(:,1), cam_pts_si2st(:,2), plt.sz, plt.c_rel, plt.mkr)
+scatter(cam_pts_st2si(:,1), cam_pts_st2si(:,2), plt.sz, plt.c_stor, plt.mkr)
+    % 'MarkerFaceAlpha', plt.alpha, 'MarkerEdgeAlpha', plt.alpha)
+scatter(cam_pts_si2st(:,1), cam_pts_si2st(:,2), plt.sz, plt.c_rel, plt.mkr, ...
+    'MarkerFaceAlpha', plt.alpha, 'MarkerEdgeAlpha', plt.alpha)
 scatter(0, 0, 200, 'k', 'o', 'LineWidth', 1.5)
 scatter(0, 0, 300, 'k', '+', 'LineWidth', 1.5)
 axis equal
 set(gca, 'FontSize', plt.axes);
-xlabel('x (cm)', 'FontSize',plt.label)
-ylabel('y (cm)', 'FontSize',plt.label)
-legend('Storage Cam', 'Transmission Cam', 'FontSize', plt.label)
+xlabel('x (cm)', 'FontSize', plt.label)
+ylabel('y (cm)', 'FontSize', plt.label)
+% legend('Storage Cam', 'Transmission Cam', 'FontSize', plt.legend)
+legend('Storage Cam', 'St-Si Cam', ...
+    'Si-St Cam', 'FontSize', plt.legend, ...
+    'Location', 'northeast')
 % title('Sit-to-Stand Cam Shapes','FontSize',plt.title)
 
 %%
@@ -123,5 +156,5 @@ axis equal
 set(gca, 'FontSize',plt.axes);
 xlabel('x (cm)', 'FontSize',plt.label)
 ylabel('y (cm)', 'FontSize',plt.label)
-legend('Storage Cam', 'Transmission Cam', 'FontSize', plt.label)
-% title('Stand-to-Sit Cam Shapes','FontSize',plt.title)
+legend('Storage Cam', 'Transmission Cam', 'FontSize', plt.legend)
+title('Stand-to-Sit Cam Shapes','FontSize',plt.title)
