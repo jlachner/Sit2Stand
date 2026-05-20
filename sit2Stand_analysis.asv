@@ -21,10 +21,10 @@ plt.c_sim = '#3594CC'; % simulation; medium blue
 % stand-to-sit force profiles
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force_63.mat';
-% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
-folder.si2st_exp = 'robot_posCtrl/prints/2026-01-22_no-pause/';
+folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
+% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-22_no-pause/';
 folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
-% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-14_spring-test-20cm_01/'; % spring test
+folder.si2st_exp = 'robot_posCtrl/prints/2026-01-14_spring-test-20cm_01/'; % spring test
 
 % Load experimental joint and force data and convert to Cartesian space
 [p_traj_si2st, F_si2st, t_si2st] = q_convert(folder.si2st_exp, robot); % Si2St
@@ -54,7 +54,6 @@ ylabel('Cable Tension (N)', 'FontSize', plt.label)
 %     'FontSize', plt.title)
 legend('Stand-to-Sit (Storage)', 'Sit-to-Stand (Release)', ...
     'Location', 'northeast', 'FontSize', plt.axes)
-%}
 
 % Force vs. cable displacement
 figure();
@@ -62,14 +61,12 @@ plot(100*sim_st2si.x, sim_st2si.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_
 hold on;
 plot(100*sim_si2st.x, sim_si2st.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_rel)
 set(gca, 'FontSize', plt.axes);
-xlabel('Cable Stroke Displacement (cm)', 'FontSize', plt.label)
+xlabel('Transmission Cable Displacement (cm)', 'FontSize', plt.label)
 ylabel('Cable Tension (N)', 'FontSize', plt.label)
 % title('Simulated Sit-to-Stand and Stand-to-Sit Force Profiles', ...
 %     'FontSize', plt.title)
 legend('Stand-to-Sit (Storage)', 'Sit-to-Stand (Release)', ...
     'Location', 'northeast', 'FontSize', plt.axes)
-xlim([0, 5.1])
-ylim([0 80])
 %}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,14 +169,14 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     title(['Measured ', profile_name, ' Force Profile'], 'FontSize', plt.title);
     xlabel('Time (s)', 'FontSize', plt.label);
     ylabel('Cable Tension (N)', 'FontSize', plt.label)
-    ylim([0, 80])
+    ylim([0, 100])
     
     %% Plot experimental force-displacement profile
     % Offset end-effector data so that pulling on the cable results in 
     % positive cable displacement, starting from 0.
     x_traj = x_traj - max(x_traj);
-    x_traj = -x_traj;
-    % x_traj = x_traj - min(x_traj);
+    % x_traj = -x_traj;
+    x_traj = x_traj - min(x_traj);
     % x_traj = max(x_traj) - x_traj;
 
     % Normalize trajectory in x-direction to plot against normalized stroke
@@ -243,15 +240,18 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     hold on;
     plot(x_trial(half_ind+1:end), F_trial(half_ind+1:end), 'LineWidth', plt.lwidth, ...
         'Color', plt.c_rel); % plot in release color
-    plot(sim.x, sim.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_sim);
+    % plot(x_trial, F_trial, 'LineWidth', plt.lwidth, 'Color', plt.c_rel)
+    % hold on;
+    % plot(sim.x, sim.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_sim);
     set(gca, 'FontSize', plt.axes);
     xlabel('Cable Stroke Distance (cm)', 'FontSize', plt.label)
+    % xlabel('Cable Displacement (cm)', 'FontSize', plt.label)
     ylabel('Cable Tension (N)', 'FontSize', plt.label)
     % title(['Measured and Predicted ', profile_name, ' Force Profiles'], ...
     %     'FontSize', plt.title)
     legend('Measured, Storage', 'Measured, Release', 'Predicted', ...
         'Location', 'northeast', 'FontSize', plt.axes)
-    ylim([0 80])
+    ylim([0 100])
 
 end
 

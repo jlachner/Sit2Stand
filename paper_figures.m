@@ -81,6 +81,7 @@ legend('Compound Bow', 'Straight Bow', 'FontSize', plt.legend, 'Location', 'nort
 
 %% Figure: Desired Force Trajectories
 
+% Max 100 N:
 % Sit-to-stand
 x_si2st = [0, 20, 32.5, 40, 60, 80, 100];
 F_si2st = [0, 25, 100,  20, 10, 5,  0];
@@ -89,6 +90,17 @@ E_si2st = cumtrapz(x_si2st, F_si2st);
 % Stand-to-sit
 x_st2si = [0, 20, 32.5, 40, 60, 80, 100];
 F_st2si = [0, 20, 50,   37.5, 22.5, 10, 0];
+E_st2si = cumtrapz(x_st2si, F_st2si);
+
+% Max 80 N:
+% Sit-to-stand
+x_si2st = [0, 20, 32.5, 40, 60, 80, 100];
+F_si2st = [0, 25, 100,  20, 10, 5,  0] * 0.8;
+E_si2st = cumtrapz(x_si2st, F_si2st);
+
+% Stand-to-sit
+x_st2si = [0, 20, 32.5, 40, 60, 80, 100];
+F_st2si = [0, 20, 50,   37.5, 22.5, 10, 0] * 0.8;
 E_st2si = cumtrapz(x_st2si, F_st2si);
 
 figure();
@@ -103,6 +115,7 @@ ylabel('Cable Tension (N)', 'FontSize', plt.label)
 %     'FontSize', plt.label, 'Location', 'northeast')
 legend('St-Si (Energy Storage)', 'Si-St (Energy Release)', ...
     'FontSize', plt.legend, 'Location', 'northeast')
+xlim([1 100])
 
 %% Figure: Generated Cam Shapes
 % plt.label = 27;
