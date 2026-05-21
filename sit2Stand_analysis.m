@@ -25,6 +25,7 @@ folder.st2si_sim = 'simulation_data/st2si_force_63.mat';
 folder.si2st_exp = 'robot_posCtrl/prints/2026-01-22_no-pause/';
 folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
 % folder.si2st_exp = 'robot_posCtrl/prints/2026-01-14_spring-test-20cm_01/'; % spring test
+folder.si2st_exp = 'robot_posCtrl/prints/2026-05-20_si2st_4-0s-duration_01/'; % new bearings 1st attempt
 
 % Load experimental joint and force data and convert to Cartesian space
 [p_traj_si2st, F_si2st, t_si2st] = q_convert(folder.si2st_exp, robot); % Si2St

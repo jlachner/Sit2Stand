@@ -13,7 +13,7 @@ anim.init();
 anim.attachRobot(robot);
 
 % Line parameters, stand-to-sit
-A = 0.0612;           % distance (meters)
+A = 0.05;           % distance (meters)
 T_sit = 2.0;        % period for one revolution
 omega_sit = 2 * pi / T_sit;
 dt = 0.005;
