@@ -21,11 +21,8 @@ plt.c_sim = '#3594CC'; % simulation; medium blue
 % stand-to-sit force profiles
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force_63.mat';
-% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-10_Sit2Stand_02/'; % paper 1st draft
-folder.si2st_exp = 'robot_posCtrl/prints/2026-01-22_no-pause/';
 folder.st2si_exp = 'robot_posCtrl/prints/2026-01-10_Stand2Sit_03/'; % paper 1st draft
-% folder.si2st_exp = 'robot_posCtrl/prints/2026-01-14_spring-test-20cm_01/'; % spring test
-folder.si2st_exp = 'robot_posCtrl/prints/2026-05-20_si2st_4-0s-duration_01/'; % new bearings 1st attempt
+folder.si2st_exp = 'robot_posCtrl/prints/2026-05-21/';
 
 % Load experimental joint and force data and convert to Cartesian space
 [p_traj_si2st, F_si2st, t_si2st] = q_convert(folder.si2st_exp, robot); % Si2St
@@ -39,8 +36,8 @@ sim_si2st = load(folder.si2st_sim);
 sim_st2si = load(folder.st2si_sim);
 
 % Make x go from 0 at sitting to full stroke at standing
-% sim_st2si.x = max(sim_st2si.x) - sim_st2si.x;
-% sim_si2st.x = max(sim_si2st.x) - sim_si2st.x;
+sim_st2si.x = max(sim_st2si.x) - sim_st2si.x;
+sim_si2st.x = max(sim_si2st.x) - sim_si2st.x;
 
 %{
 % Force vs. stance percentage
@@ -69,8 +66,8 @@ ylabel('Cable Tension (N)', 'FontSize', plt.label)
 %     'FontSize', plt.title)
 legend('Stand-to-Sit (Storage)', 'Sit-to-Stand (Release)', ...
     'Location', 'northeast', 'FontSize', plt.axes)
-xlim([0, 5.1])
-ylim([0 80])
+% xlim([0, 5.1])
+% ylim([0 80])
 %}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,7 +230,7 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     figure();
     plot(sim.x, sim.F, 'LineWidth', plt.lwidth);
     set(gca, 'FontSize', plt.axes);
-    xlabel('Normalized Cable Displacement')
+    xlabel('Cable Stroke Distance (cm)')
     ylabel('Cable Tension (N)')
     title(['Simulated ', profile_name, ' Cam Force Profile'])
     
@@ -278,29 +275,33 @@ function results_table = analysis(sim, F_exp, x_exp)
     x_rel = x_exp(half_ind+1:end);
 
     % Storage phase
-    [F_peak_stor, x_peak_stor, F_seat_stor, x_seat_stor] = analysis_calcs(F_stor, x_stor);
+    [F_peak_stor, x_peak_stor, F_seat_stor, x_seat_stor, ~] = analysis_calcs(F_stor, x_stor);
 
     % Release phase
-    [F_peak_rel, x_peak_rel, F_seat_rel, x_seat_rel] = analysis_calcs(F_rel, x_rel);
+    [F_peak_rel, x_peak_rel, F_seat_rel, x_seat_rel, ~] = analysis_calcs(F_rel, x_rel);
 
     % Simulated
     sim.x = 100 * sim.x;
-    [F_peak_sim, x_peak_sim, F_seat_sim, x_seat_sim] = analysis_calcs(sim.F, sim.x);
+    [F_peak_sim, x_peak_sim, F_seat_sim, x_seat_sim, stroke_sim] = analysis_calcs(sim.F, sim.x);
 
     % Calculate experimental percent difference from prediction
     % Storage phase
     diff_F_peak_stor = (F_peak_sim - F_peak_stor) / F_peak_sim * 100;
-    diff_x_peak_stor = (x_peak_sim - x_peak_stor) / x_peak_sim * 100;
+    % diff_x_peak_stor = (x_peak_sim - x_peak_stor) / x_peak_sim * 100;
+    diff_x_peak_stor = (x_peak_sim - x_peak_stor) / stroke_sim * 100;
 
     diff_F_seat_stor = (F_seat_sim - F_seat_stor) / F_seat_sim * 100;
-    diff_x_seat_stor = (x_seat_sim - x_seat_stor) / x_seat_sim * 100;
+    % diff_x_seat_stor = (x_seat_sim - x_seat_stor) / x_seat_sim * 100;
+    diff_x_seat_stor = (x_seat_sim - x_seat_stor) / stroke_sim * 100;
 
     % Release phase
     diff_F_peak_rel = (F_peak_sim - F_peak_rel) / F_peak_sim * 100;
-    diff_x_peak_rel = (x_peak_sim - x_peak_rel) / x_peak_sim * 100;
+    % diff_x_peak_rel = (x_peak_sim - x_peak_rel) / x_peak_sim * 100;
+    diff_x_peak_rel = (x_peak_sim - x_peak_rel) / stroke_sim * 100;
 
     diff_F_seat_rel = (F_seat_sim - F_seat_rel) / F_seat_sim * 100;
-    diff_x_seat_rel = (x_seat_sim - x_seat_rel) / x_seat_sim * 100;
+    % diff_x_seat_rel = (x_seat_sim - x_seat_rel) / x_seat_sim * 100;
+    diff_x_seat_rel = (x_seat_sim - x_seat_rel) / stroke_sim * 100;
 
     % Store all calculated values in a table
     results_table = table([F_peak_sim; F_peak_stor; diff_F_peak_stor; F_peak_rel; diff_F_peak_rel], ...
@@ -311,7 +312,7 @@ function results_table = analysis(sim, F_exp, x_exp)
                           'RowNames', {'Predicted', 'Measured (Storage)', '% Difference (Storage)', ...
                           'Measured (Release)', '% Difference (Release)'});
 
-    function [F_peak, x_peak, F_seat, x_seat] = analysis_calcs(F, x)
+    function [F_peak, x_peak, F_seat, x_seat, stroke] = analysis_calcs(F, x)
     
         [F_peak, F_peak_ind] = max(F);
         x_peak = x(F_peak_ind);
@@ -322,6 +323,8 @@ function results_table = analysis(sim, F_exp, x_exp)
         else
             x_seat = x(end);
         end
+
+        stroke = max(x);
 
     end
 
