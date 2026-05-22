@@ -259,9 +259,9 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
 
     // Update with your CSV file path (relative or absolute); EDIT _q_data to follow different trajectory
     // if (sit2stand)
-        _q_data = readCSV("../data/q_linear_z_sit_to_stand.csv").transpose();  // Now: N x 7
+        // _q_data = readCSV("../data/q_linear_z_sit_to_stand.csv").transpose();  // Now: N x 7
     // else
-        // _q_data = readCSV("../data/q_linear_z_stand_to_sit.csv").transpose();  // Now: N x 7
+        _q_data = readCSV("../data/q_linear_z_stand_to_sit.csv").transpose();  // Now: N x 7
     _N_data = _q_data.rows();
 
     cout << "Loaded " << _N_data << " trajectory points. \n\n" << endl;
