@@ -24,7 +24,7 @@ plt.c_sim = '#3594CC'; % simulation; medium blue
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force_63.mat';
 % folder.st2si_exp = 'robot_posCtrl/prints/2026-05-22_st2si_02/';
-folder.st2si_exp = 'robot_posCtrl/prints/2026-06-03_st2si_02/';
+folder.st2si_exp = 'robot_posCtrl/prints/2026-06-03_st2si_04/';
 folder.si2st_exp = 'robot_posCtrl/prints/2026-05-21_longer-stroke_01/';
 
 % Load experimental joint and force data and convert to Cartesian space
