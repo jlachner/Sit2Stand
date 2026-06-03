@@ -13,7 +13,7 @@ anim.init();
 anim.attachRobot(robot);
 
 % Line parameters, stand-to-sit
-A = 0.0671;           % distance (meters)
+A = 0.085;           % distance (meters)
 T_sit = 2.0;        % period for one revolution
 omega_sit = 2 * pi / T_sit;
 dt = 0.005;
@@ -44,7 +44,7 @@ t_record = linspace(0, T_tot, N_tot);
 % q = deg2rad([-97.50, 102.43, -0.01, -63.26, -111.18, 85.67, -11.39]'); % table against wall, spring jig clamped to table, sit-to-stand groove aligned
 % q = deg2rad([-97.55, 101.22, 0.39, -65.36, -111.28, 85.98, -10.55]'); % updated 05-21-2026
 q = deg2rad([-98.15, 101.29, 0.39, -64.97, -111.85, 85.72, -10.81]'); % sit-to-stand updated 05-21-2026_02
-q = deg2rad([-98.14, 102.42, 0.39, -63.52, -111.83, 85.61, -11.09]'); % stand-to-sit updated 05-22-2026
+% q = deg2rad([-98.14, 102.42, 0.39, -63.52, -111.83, 85.61, -11.09]'); % stand-to-sit updated 05-22-2026
 
 H0 = robot.getForwardKinematics(q); 
 R0 = H0(1:3, 1:3);                      % Starting orientation    
