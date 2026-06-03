@@ -197,13 +197,13 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
     // }
     // else {
         // // aligned with stand-to-sit groove:
-        qInitial[0] = -98.14 * M_PI/180;
-        qInitial[1] = 102.42 * M_PI/180;
+        qInitial[0] = -97.86 * M_PI/180;
+        qInitial[1] = 103.13 * M_PI/180;
         qInitial[2] = 0.39 * M_PI/180;
-        qInitial[3] = -63.52 * M_PI/180;
-        qInitial[4] = -111.83 * M_PI/180;
-        qInitial[5] = 85.61 * M_PI/180;
-        qInitial[6] = -11.09 * M_PI/180;
+        qInitial[3] = -62.76 * M_PI/180;
+        qInitial[4] = -111.56 * M_PI/180;
+        qInitial[5] = 85.66 * M_PI/180;
+        qInitial[6] = -11.16 * M_PI/180;
     // }
 
     // Initialize joint positions
