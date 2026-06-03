@@ -186,24 +186,24 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
         // qInitial[6] =  * M_PI/180;
 
     // if (sit2stand) {
-    // // aligned with sit-to-stand groove:
-        // qInitial[0] = -98.15 * M_PI/180;
-        // qInitial[1] = 101.29 * M_PI/180;
-        // qInitial[2] = 0.39 * M_PI/180;
-        // qInitial[3] = -64.97 * M_PI/180;
-        // qInitial[4] = -111.85 * M_PI/180;
-        // qInitial[5] = 85.72 * M_PI/180;
-        // qInitial[6] = -10.81 * M_PI/180;
+        // aligned with sit-to-stand groove:
+        qInitial[0] = -98.15 * M_PI/180;
+        qInitial[1] = 101.29 * M_PI/180;
+        qInitial[2] = 0.39 * M_PI/180;
+        qInitial[3] = -64.97 * M_PI/180;
+        qInitial[4] = -111.85 * M_PI/180;
+        qInitial[5] = 85.72 * M_PI/180;
+        qInitial[6] = -10.81 * M_PI/180;
     // }
     // else {
         // // aligned with stand-to-sit groove:
-        qInitial[0] = -97.86 * M_PI/180;
-        qInitial[1] = 103.13 * M_PI/180;
-        qInitial[2] = 0.39 * M_PI/180;
-        qInitial[3] = -62.76 * M_PI/180;
-        qInitial[4] = -111.56 * M_PI/180;
-        qInitial[5] = 85.66 * M_PI/180;
-        qInitial[6] = -11.16 * M_PI/180;
+        // qInitial[0] = -97.86 * M_PI/180;
+        // qInitial[1] = 103.13 * M_PI/180;
+        // qInitial[2] = 0.39 * M_PI/180;
+        // qInitial[3] = -62.76 * M_PI/180;
+        // qInitial[4] = -111.56 * M_PI/180;
+        // qInitial[5] = 85.66 * M_PI/180;
+        // qInitial[6] = -11.16 * M_PI/180;
     // }
 
     // Initialize joint positions
@@ -258,9 +258,9 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
 
     // Update with your CSV file path (relative or absolute); EDIT _q_data to follow different trajectory
     // if (sit2stand)
-        // _q_data = readCSV("../data/q_linear_z_sit_to_stand.csv").transpose();  // Now: N x 7
+        _q_data = readCSV("../data/q_linear_z_sit_to_stand.csv").transpose();  // Now: N x 7
     // else
-        _q_data = readCSV("../data/q_linear_z_stand_to_sit.csv").transpose();  // Now: N x 7
+        // _q_data = readCSV("../data/q_linear_z_stand_to_sit.csv").transpose();  // Now: N x 7
     _N_data = _q_data.rows();
 
     cout << "Loaded " << _N_data << " trajectory points. \n\n" << endl;
