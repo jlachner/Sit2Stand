@@ -177,34 +177,33 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
     // sit2stand = true; 
 
     // Initialize joint position; EDIT here for different initial poses
-   // table against wall, aligned with sit-to-stand groove:
-        qInitial[0] = -97.50 * M_PI/180;
-        qInitial[1] = 102.43 * M_PI/180;
-        qInitial[2] = -0.01 * M_PI/180;
-        qInitial[3] = -63.26 * M_PI/180;
-        qInitial[4] = -111.18 * M_PI/180;
-        qInitial[5] = 85.67 * M_PI/180;
-        qInitial[6] = -11.39 * M_PI/180;
+        // qInitial[0] =  * M_PI/180;
+        // qInitial[1] =  * M_PI/180;
+        // qInitial[2] =  * M_PI/180;
+        // qInitial[3] =  * M_PI/180;
+        // qInitial[4] =  * M_PI/180;
+        // qInitial[5] =  * M_PI/180;
+        // qInitial[6] =  * M_PI/180;
 
     // if (sit2stand) {
     // // aligned with sit-to-stand groove:
-    //     qInitial[0] = -86.98 * M_PI/180;
-    //     qInitial[1] = 105.51 * M_PI/180;
-    //     qInitial[2] = 26.71 * M_PI/180;
-    //     qInitial[3] = -60.28 * M_PI/180;
-    //     qInitial[4] = 65.55 * M_PI/180;
-    //     qInitial[5] = 69.99 * M_PI/180;
-    //     qInitial[6] = 22.75 * M_PI/180;
+        // qInitial[0] = -98.15 * M_PI/180;
+        // qInitial[1] = 101.29 * M_PI/180;
+        // qInitial[2] = 0.39 * M_PI/180;
+        // qInitial[3] = -64.97 * M_PI/180;
+        // qInitial[4] = -111.85 * M_PI/180;
+        // qInitial[5] = 85.72 * M_PI/180;
+        // qInitial[6] = -10.81 * M_PI/180;
     // }
     // else {
         // // aligned with stand-to-sit groove:
-        // qInitial[0] = -86.91 * M_PI/180;
-        // qInitial[1] = 106.55 * M_PI/180;
-        // qInitial[2] = 26.71 * M_PI/180;
-        // qInitial[3] = -58.99 * M_PI/180;
-        // qInitial[4] = 65.13 * M_PI/180;
-        // qInitial[5] = 70.34 * M_PI/180;
-        // qInitial[6] = 22.97 * M_PI/180;
+        qInitial[0] = -98.14 * M_PI/180;
+        qInitial[1] = 102.42 * M_PI/180;
+        qInitial[2] = 0.39 * M_PI/180;
+        qInitial[3] = -63.52 * M_PI/180;
+        qInitial[4] = -111.83 * M_PI/180;
+        qInitial[5] = 85.61 * M_PI/180;
+        qInitial[6] = -11.09 * M_PI/180;
     // }
 
     // Initialize joint positions
