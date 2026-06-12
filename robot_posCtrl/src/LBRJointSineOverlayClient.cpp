@@ -169,12 +169,16 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
     : _index(0)
 {
 
+    // Use Explicit-cpp to create your robot
+    myLBR = new iiwa14(1, "Dwight");
+    myLBR->init( );
+
     // Time variables for control loop
     currentTime = 0;
     sampleTime = 0;
 
     // Choose sit-to-stand or stand-to-sit trajectory; EDIT here
-    // sit2stand = true; 
+    sit2stand = true; 
 
     // Initialize joint position; EDIT here for different initial poses
         // qInitial[0] =  * M_PI/180;
@@ -185,7 +189,7 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
         // qInitial[5] =  * M_PI/180;
         // qInitial[6] =  * M_PI/180;
 
-    // if (sit2stand) {
+    if (sit2stand) {
         // aligned with sit-to-stand groove:
         qInitial[0] = -98.15 * M_PI/180;
         qInitial[1] = 101.29 * M_PI/180;
@@ -194,17 +198,17 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
         qInitial[4] = -111.85 * M_PI/180;
         qInitial[5] = 85.72 * M_PI/180;
         qInitial[6] = -10.81 * M_PI/180;
-    // }
-    // else {
-        // // aligned with stand-to-sit groove:
-        // qInitial[0] = -97.86 * M_PI/180;
-        // qInitial[1] = 103.13 * M_PI/180;
-        // qInitial[2] = 0.39 * M_PI/180;
-        // qInitial[3] = -62.76 * M_PI/180;
-        // qInitial[4] = -111.56 * M_PI/180;
-        // qInitial[5] = 85.66 * M_PI/180;
-        // qInitial[6] = -11.16 * M_PI/180;
-    // }
+    }
+    else {
+        // aligned with stand-to-sit groove:
+        qInitial[0] = -97.86 * M_PI/180;
+        qInitial[1] = 103.13 * M_PI/180;
+        qInitial[2] = 0.39 * M_PI/180;
+        qInitial[3] = -62.76 * M_PI/180;
+        qInitial[4] = -111.56 * M_PI/180;
+        qInitial[5] = 85.66 * M_PI/180;
+        qInitial[6] = -11.16 * M_PI/180;
+    }
 
     // Initialize joint positions
     for( int i=0; i < myLBR->nq; i++ )
@@ -213,9 +217,11 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
         qOld[i] = qInitial[i];
     }
 
-    // Use Explicit-cpp to create your robot
-    myLBR = new iiwa14(1, "Dwight");
-    myLBR->init( );
+    // Initialize external joint torques
+    for( int i=0; i < myLBR->nq; i++ )
+    {
+        tauExtRobot[i] = 0.0;
+    }
 
     q  = Eigen::VectorXd::Zero( myLBR->nq );
     dq  = Eigen::VectorXd::Zero( myLBR->nq );
@@ -333,6 +339,17 @@ void LBRJointSineOverlayClient::command()
     }
 
     robotCommand().setJointPosition(jointPos);
+
+
+    // // Get torque sensor data from robot
+    // memcpy( tauExt_robot, robotState().getExternalTorque(), 7*sizeof(double) );
+    // cout << tauExt_robot[0] << ", " << tauExt_robot[1] << ", " << tauExt_robot[2] << ", " << tauExt_robot[3] << ", " << tauExt_robot[4] << ", " << tauExt_robot[5] << ", " << tauExt_robot[6] << endl;
+
+
+    cout << "test" << endl;
+
+
+
 
     // Only advance until last index, then hold
     if (_index < _N_data)

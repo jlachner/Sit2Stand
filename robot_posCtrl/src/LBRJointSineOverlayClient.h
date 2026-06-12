@@ -107,11 +107,11 @@ private:
    double currentTime;
    double sampleTime;
 
-   // bool sit2stand;
-
+   bool sit2stand;
    double qInitial[7];
    double qCurr[7];
    double qOld[7];
+   double tauExtRobot[7];
 
    Eigen::MatrixXd _q_data;   // CSV joint trajectory data (N x 7)
    int _N_data;               // Number of time steps
