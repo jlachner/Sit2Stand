@@ -101,13 +101,20 @@ public:
     * \brief Callback for the FRI state 'Commanding Active'.
     */
    virtual void command();
-      
+
+   /**
+    * \brief Damped least-squares operational-space inertia matrix.
+    *        Lambda = ( J * M^-1 * J^T + k^2 * I )^-1
+    */
+   Eigen::MatrixXd getLambdaLeastSquares(Eigen::MatrixXd M, Eigen::MatrixXd J, double k);
+
 private:
 
    double currentTime;
    double sampleTime;
 
    bool sit2stand;
+   bool F_ext_robot_biasSet;
    double qInitial[7];
    double qCurr[7];
    double qOld[7];
@@ -123,20 +130,24 @@ private:
    Eigen::VectorXd dq;
    Eigen::Vector3d pointPosition;
    Eigen::MatrixXd H;
+   Eigen::MatrixXd J;
+   Eigen::MatrixXd M;
 
    // Force-Torque Sensor
    AtiForceTorqueSensor *ftSensor;
-   double* f_sens_ee;
-   Eigen::VectorXd f_ext_ee;
-   Eigen::VectorXd m_ext_ee;
-   Eigen::VectorXd f_ext_0;
-   Eigen::VectorXd m_ext_0;
-   
+   double* f_ft_raw;               // raw double* output from ATI sensor
+   Eigen::VectorXd f_ft_ee;        // FT-sensor force,  end-effector frame
+   Eigen::VectorXd m_ft_ee;        // FT-sensor moment, end-effector frame
+   Eigen::VectorXd f_ft_0;         // FT-sensor force,  base frame
+   Eigen::VectorXd m_ft_0;         // FT-sensor moment, base frame
+   Eigen::VectorXd F_ext_robot_bias;
+
    // Text files
    std::ofstream File_dt;
    std::ofstream File_q;
    std::ofstream File_dq;
-   std::ofstream File_FExt;
+   std::ofstream File_F_ft;        // wrench from FT-sensor          [Fx Fy Fz Mx My Mz]
+   std::ofstream File_F_tau;       // wrench from joint-torque sensors
    
 };
 
