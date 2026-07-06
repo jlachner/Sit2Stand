@@ -3,11 +3,16 @@ close all; clear; clc;
 
 % Plot settings
 plt = struct;
-plt.label = 18;
-plt.legend = 16;
-plt.title = 20;
-plt.axes = 16;
-plt.lwidth = 4;
+% plt.label = 18;
+% plt.legend = 16;
+% plt.title = 20;
+% plt.axes = 16;
+% plt.lwidth = 4;
+plt.label = 10;
+plt.legend = 8;
+plt.title = 12;
+plt.axes = 9;
+plt.lwidth = 2;
 
 % plt.label = 10;
 % plt.legend = 8;
@@ -33,9 +38,6 @@ plt.c_rel = [241 162 38]/255; % releasing energy; gold
 plt.c_sim = [53 148 204]/255; % simulation; medium blue
 plt.c_stor_cam = [94 94 94]/255; % storage cam color; dark gray
 
-plt.mkr = '.';
-plt.sz = 150;
-
 % plt.w = 3.25 * 72 * 2;
 % plt.h = 2.3 * 72 * 2;
 
@@ -55,10 +57,13 @@ hold on;
 plot(knee_sorted(:,1), knee_sorted(:,2), 'LineWidth', plt.lwidth, 'Color', plt.c_knee)
 plot(pelvis_sorted(:,1), pelvis_sorted(:,2), 'LineWidth', plt.lwidth, 'Color', plt.c_pelvis)
 set(gca, 'FontSize', plt.axes)
+set(gcf, 'Units', 'inches')
+set(gcf, 'Position', [6 6 3.4 2.2])
 xlabel('Movement Pattern (%)', 'FontSize', plt.label)
 ylabel('Angle (degrees)', 'FontSize', plt.label)
 % title('Joint Angles During Sit-to-Stand', 'FontSize', plt.title)
 legend('Ankle', 'Knee', 'Pelvis', 'FontSize', plt.label, 'Location', 'northwest')
+ylim([40, 180])
 
 %% Figure: Compound Bow (Adapted from Aronson 1977)
 % Import extracted data.
@@ -74,10 +79,12 @@ plot(compound_sorted(:,1), compound_sorted(:,2), 'LineWidth', plt.lwidth, 'Color
 hold on;
 plot(straight_sorted(:,1), straight_sorted(:,2), '-.', 'LineWidth', plt.lwidth, 'Color', plt.c_straight)
 set(gca, 'FontSize', plt.axes)
+set(gcf, 'Units', 'inches')
+set(gcf, 'Position', [6 6 3.4 2.2])
 xlabel('Draw Length (in.)', 'FontSize', plt.label)
 ylabel('Draw Load (lbf)', 'FontSize', plt.label)
 % title('Bow Force-Displacement Profiles', 'FontSize', plt.title)
-legend('Compound Bow', 'Straight Bow', 'FontSize', plt.legend, 'Location', 'northwest')
+legend('Compound Bow', 'Straight Bow', 'FontSize', plt.legend, 'Location', 'southeast')
 
 %% Figure: Desired Force Trajectories
 
@@ -103,12 +110,25 @@ x_st2si = [0, 20, 32.5, 40, 60, 80, 100];
 F_st2si = [0, 20, 50,   37.5, 22.5, 10, 0] * 0.8;
 E_st2si = cumtrapz(x_st2si, F_st2si);
 
+% Max 60 N:
+% Sit-to-stand
+x_si2st = [0, 20, 32.5, 40, 60, 80, 100];
+F_si2st = [0, 25, 100,  20, 10, 5,  0] * 0.6;
+E_si2st = cumtrapz(x_si2st, F_si2st);
+
+% Stand-to-sit
+x_st2si = [0, 20, 32.5, 40, 60, 80, 100];
+F_st2si = [0, 20, 50,   37.5, 22.5, 10, 0] * 0.6;
+E_st2si = cumtrapz(x_st2si, F_st2si);
+
 figure();
 % figure('Position', [500, 500, plt.w plt.h]);
 plot(x_st2si, F_st2si, 'LineWidth', plt.lwidth, 'Color', plt.c_stor)
 hold on;
 plot(x_si2st, F_si2st, 'LineWidth', plt.lwidth, 'Color', plt.c_rel)
 set(gca, 'FontSize', plt.axes)
+set(gcf, 'Units', 'inches')
+set(gcf, 'Position', [6 6 3.4 2.2])
 xlabel('Stance Percentage (%)', 'FontSize', plt.label)
 ylabel('Cable Tension (N)', 'FontSize', plt.label)
 % legend('Stand-to-Sit (Energy Storage)', 'Sit-to-Stand (Energy Release)', ...
@@ -133,7 +153,10 @@ cam_pts_si2st = cam_pts_si2st/10;
 cam_pts_outer = cam_pts_outer/10;
 cam_pts_st2si = cam_pts_st2si/10;
 
+% Additional plot settings
 plt.alpha = 1;
+plt.mkr = '.';
+plt.sz = 75;
 
 figure();
 scatter(cam_pts_outer(:,1), cam_pts_outer(:,2), plt.sz, plt.c_stor_cam, plt.mkr)
@@ -142,16 +165,20 @@ scatter(cam_pts_st2si(:,1), cam_pts_st2si(:,2), plt.sz, plt.c_stor, plt.mkr)
     % 'MarkerFaceAlpha', plt.alpha, 'MarkerEdgeAlpha', plt.alpha)
 scatter(cam_pts_si2st(:,1), cam_pts_si2st(:,2), plt.sz, plt.c_rel, plt.mkr, ...
     'MarkerFaceAlpha', plt.alpha, 'MarkerEdgeAlpha', plt.alpha)
-scatter(0, 0, 200, 'k', 'o', 'LineWidth', 1.5)
-scatter(0, 0, 300, 'k', '+', 'LineWidth', 1.5)
+scatter(0, 0, 75, 'k', 'o', 'LineWidth', 0.5)
+scatter(0, 0, 150, 'k', '+', 'LineWidth', 0.5)
 axis equal
 set(gca, 'FontSize', plt.axes);
+set(gcf, 'Units', 'inches')
+% set(gcf, 'Position', [6 6 1.7 1.1])
+set(gcf, 'Position', [6 6 3.4 2.2])
+xlim([-3 5])
+ylim([-4 2])
 xlabel('x (cm)', 'FontSize', plt.label)
 ylabel('y (cm)', 'FontSize', plt.label)
 % legend('Storage Cam', 'Transmission Cam', 'FontSize', plt.legend)
-legend('Storage Cam', 'St-Si Cam', ...
-    'Si-St Cam', 'FontSize', plt.legend, ...
-    'Location', 'northeast')
+legend('Storage', 'St-Si', ...
+    'Si-St', 'FontSize', plt.legend, 'Location', 'northeast')
 % title('Sit-to-Stand Cam Shapes','FontSize',plt.title)
 
 %%

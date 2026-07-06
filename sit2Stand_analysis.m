@@ -11,19 +11,31 @@ plt = struct;
 % plt.title = 20;
 % plt.axes = 18;
 % plt.lwidth = 4;
-plt.label = 12;
+plt.label = 10;
 plt.title = 12;
 plt.axes = 9;
+plt.legend = 9;
 plt.lwidth = 2;
 plt.c_stor = '#298C8C'; % storing energy; teal
 plt.c_rel = '#F1A226'; % releasing energy; gold
+
+% Colors for plotting si2st and st2si in same figure
+alpha = 1;
+plt.c_stor_sist = '#F1A226'; % sit-to-stand storage, gold, bold
+plt.c_stor_sist = [241 162 38 alpha*256]/256; % sit-to-stand storage, gold, bold, transparent
+plt.c_rel_sist = '#F1C285'; % sit-to-stand release, gold, light
+plt.c_rel_sist = [241 194 133 alpha*256]/256; % sit-to-stand release, gold, light, transparent
+plt.c_stor_stsi = '#298C8C'; % stand-to-sit storage, teal, bold
+plt.c_stor_stsi = [41 140 140 alpha*256]/256; % stand-to-sit storage, teal, bold, transparent
+plt.c_rel_stsi = '#5BB5B7'; % stand-to-sit storage, teal, light
+plt.c_rel_stsi = [91 181 183 alpha*256]/256; % stand-to-sit storage, teal, light, transparent
 plt.c_sim = '#3594CC'; % simulation; medium blue
+plt.c_sim = [53 148 204]/256; % simulation; medium blue, transparent
 
 % Specify locations of data for experimental and simulated sit-to-stand and 
 % stand-to-sit force profiles
 folder.si2st_sim = 'simulation_data/si2st_force_63.mat';
 folder.st2si_sim = 'simulation_data/st2si_force_63.mat';
-% folder.st2si_exp = 'robot_posCtrl/prints/2026-05-22_st2si_02/';
 folder.st2si_exp = 'robot_posCtrl/prints/2026-06-03_st2si_04/';
 folder.si2st_exp = 'robot_posCtrl/prints/2026-06-03_si2st_02/';
 
@@ -34,7 +46,8 @@ folder.si2st_exp = 'robot_posCtrl/prints/2026-06-03_si2st_02/';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plotting
 
-% Plot predicted force profiles
+% Simulated force profiles
+
 sim_si2st = load(folder.si2st_sim);
 sim_st2si = load(folder.st2si_sim);
 
@@ -42,51 +55,53 @@ sim_st2si = load(folder.st2si_sim);
 sim_st2si.x = max(sim_st2si.x) - sim_st2si.x;
 sim_si2st.x = max(sim_si2st.x) - sim_si2st.x;
 
-%{
-% Force vs. stance percentage
-figure();
-plot(sim_st2si.pct, sim_st2si.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_stor)
-hold on;
-plot(sim_si2st.pct, sim_si2st.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_rel)
-set(gca, 'FontSize', plt.axes);
-xlabel('Stance Percentage (%)', 'FontSize', plt.label)
-ylabel('Cable Tension (N)', 'FontSize', plt.label)
-% title('Simulated Sit-to-Stand and Stand-to-Sit Force Profiles', ...
-%     'FontSize', plt.title)
-legend('Stand-to-Sit (Storage)', 'Sit-to-Stand (Release)', ...
-    'Location', 'northeast', 'FontSize', plt.axes)
-%}
+% % Force vs. stance percentage
+% figure();
+% plot(sim_st2si.pct, sim_st2si.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_stor)
+% hold on;
+% plot(sim_si2st.pct, sim_si2st.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_rel)
+% set(gca, 'FontSize', plt.axes);
+% xlabel('Stance Percentage (%)', 'FontSize', plt.label)
+% ylabel('Cable Tension (N)', 'FontSize', plt.label)
+% % title('Simulated Sit-to-Stand and Stand-to-Sit Force Profiles', ...
+% %     'FontSize', plt.title)
+% legend('Stand-to-Sit (Storage)', 'Sit-to-Stand (Release)', ...
+%     'Location', 'northeast', 'FontSize', plt.axes)
 
-% Force vs. cable displacement
+% Plot simulated force vs. cable displacement alone
 figure();
 plot(100*sim_st2si.x, sim_st2si.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_stor)
 hold on;
 plot(100*sim_si2st.x, sim_si2st.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_rel)
 set(gca, 'FontSize', plt.axes);
+set(gcf, 'Units', 'inches')
+set(gcf, 'Position', [6 6 3.4 2.2])
 xlabel('Cable Stroke Displacement (cm)', 'FontSize', plt.label)
 ylabel('Cable Tension (N)', 'FontSize', plt.label)
 % title('Simulated Sit-to-Stand and Stand-to-Sit Force Profiles', ...
 %     'FontSize', plt.title)
-legend('Stand-to-Sit (Storage)', 'Sit-to-Stand (Release)', ...
+legend('St-Si (Storage)', 'Si-St (Release)', ...
     'Location', 'northeast', 'FontSize', plt.axes)
 % xlim([0, 5.1])
 % ylim([0 80])
 %}
 
-% Plot experimental force profiles
-plot_fcn(p_traj_si2st, F_si2st, t_si2st, 'Sit-to-Stand', folder, plt)
-plot_fcn(p_traj_st2si, F_st2si, t_st2si, 'Stand-to-Sit', folder, plt)
+
+% Pre-process x-direction and force data from raw trajectory
+[x_si2st, F_si2st, half_ind_si2st] = process_x(p_traj_si2st, F_si2st);
+[x_st2si, F_st2si, half_ind_st2si] = process_x(p_traj_st2si, F_st2si);
+
+% Plot experimental and simulated force profiles together
+h = figure();
+plot_fcn(x_st2si, F_st2si, t_st2si, half_ind_st2si, 'Stand-to-Sit', folder, plt, h)
+plot_fcn(x_si2st, F_si2st, t_si2st, half_ind_si2st, 'Sit-to-Stand', folder, plt, h)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Analysis
 
-% Pre-process x-direction data from raw trajectory
-x_si2st = process_x(p_traj_si2st);
-x_st2si = process_x(p_traj_st2si);
-
 % Analyze key points and store results in tables
-results_si2st = analysis(sim_si2st, F_si2st, x_si2st);
-results_st2si = analysis(sim_st2si, F_st2si, x_st2si);
+results_si2st = analysis(sim_si2st, F_si2st, x_si2st, 'Sit-to-Stand');
+results_st2si = analysis(sim_st2si, F_st2si, x_st2si, 'Stand-to-Sit');
 
 writetable(results_si2st, 'results/results_si2st.csv', 'WriteRowNames', true);
 writetable(results_st2si, 'results/results_st2si.csv', 'WriteRowNames', true);
@@ -145,41 +160,51 @@ function [p_traj, F_mag, t_exp] = q_convert(folder, robot)
 
 end
 
-function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
+function plot_fcn(x_trial, F_mag, t_exp, half_ind, profile_name, folder, plt, handle)
 % PLOT_FCN Generate plots for predicted and measured force profiles. Input
 % determines whether plot is for sit-to-stand or stand-to-sit profile.
 
-    % Extract trajectories in each direction and convert to centimeters.
-    x_traj = 100 * p_traj(1, :);
-    y_traj = 100 * p_traj(2, :);
-    z_traj = 100 * p_traj(3, :);
-
-    % Plot end-effector trajectory.
-    figure();
-    plot3(x_traj, y_traj, z_traj);
-    axis equal
-    xlabel('X (cm)')
-    ylabel('Y (cm)')
-    zlabel('Z (cm)')
-    title('End Effector Trajectory')
+    % % Extract trajectories in each direction and convert to centimeters.
+    % x_traj = 100 * p_traj(1, :);
+    % y_traj = 100 * p_traj(2, :);
+    % z_traj = 100 * p_traj(3, :);
+    % 
+    % % Plot end-effector trajectory.
+    % figure();
+    % plot3(x_traj, y_traj, z_traj);
+    % axis equal
+    % xlabel('X (cm)')
+    % ylabel('Y (cm)')
+    % zlabel('Z (cm)')
+    % title('End Effector Trajectory')
     
-    % Plot raw experimental force vs. time data.
-    figure();
-    plot(t_exp, F_mag, 'LineWidth', plt.lwidth)
-    % plot(t_exp(1:Nt)/t_exp(Nt), flip(F_mag(1,1:Nt), 2), 'LineWidth', plt.lwidth)
-    set(gca, 'FontSize', plt.axes);
-    title(['Measured ', profile_name, ' Force Profile'], 'FontSize', plt.title);
-    xlabel('Time (s)', 'FontSize', plt.label);
-    ylabel('Cable Tension (N)', 'FontSize', plt.label)
-    ylim([0, 80])
+    % % Plot raw experimental force vs. time data.
+    % figure();
+    % plot(t_exp, F_mag, 'LineWidth', plt.lwidth)
+    % % plot(t_exp(1:Nt)/t_exp(Nt), flip(F_mag(1,1:Nt), 2), 'LineWidth', plt.lwidth)
+    % set(gca, 'FontSize', plt.axes);
+    % title(['Measured ', profile_name, ' Force Profile'], 'FontSize', plt.title);
+    % xlabel('Time (s)', 'FontSize', plt.label);
+    % ylabel('Cable Tension (N)', 'FontSize', plt.label)
+    % ylim([0, 80])
     
     %% Plot experimental force-displacement profile
-    % Offset end-effector data so that pulling on the cable results in 
-    % positive cable displacement, starting from 0.
-    x_traj = x_traj - max(x_traj);
-    x_traj = -x_traj;
-    % x_traj = x_traj - min(x_traj);
-    % x_traj = max(x_traj) - x_traj;
+    % Trim at local minima
+    if strcmp(profile_name, 'Sit-to-Stand')
+        % Sit-to-stand:
+        ind_min_stor = 293;
+        ind_min_rel = 311;
+    else
+        % Stand-to-sit:
+        ind_min_stor = 274;
+        ind_min_rel = 330;
+    end
+
+    % % Offset end-effector data so that pulling on the cable results in 
+    % % positive cable displacement, starting from 0.
+    % % x_traj = x_traj - max(x_traj); % when the local minima is at the maximum pull
+    x_trial = x_trial - x_trial(ind_min_stor);
+    % x_traj = -x_traj;
 
     % Normalize trajectory in x-direction to plot against normalized stroke
     % length instead of absolute displacement.
@@ -189,21 +214,30 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     % Nt_i = 1;
     % Nt_f = 801;
 
-    % Trim F_mag to match chosen experimental duration
-    F_mag = F_mag(1:length(p_traj));
-    % Plot all data during experimental timeframe
-    Nt_i = 1;
-    Nt_f = length(F_mag);
-    F_trial = F_mag(Nt_i:Nt_f);
-    x_trial = x_traj(Nt_i:Nt_f);
-    half_ind = round((Nt_f - Nt_i)/2);
+    % % Trim F_mag to match chosen experimental duration
+    % F_mag = F_mag(1:length(p_traj));
+    % % Plot all data during experimental timeframe
+    % half_ind = round((Nt_f - Nt_i)/2);
     
+    % Plot all data, split at the halfway mark:
     figure();
-    % plot(x_trial, F_trial, 'LineWidth', plt.lwidth); % whole trajectory in 1 color
-    plot(x_trial(1:half_ind), F_trial(1:half_ind), ...
+    % plot(x_trial, F_mag, 'LineWidth', plt.lwidth); % whole trajectory in 1 color
+    plot3(x_trial(1:half_ind), F_mag(1:half_ind), 1:length(x_trial(1:half_ind)),...
         'LineWidth', plt.lwidth, 'Color', plt.c_stor); % storage color
     hold on;
-    plot(x_trial(half_ind+1:end), F_trial(half_ind+1:end), ...
+    plot3(x_trial(half_ind+1:end), F_mag(half_ind+1:end), 1:length(x_trial(half_ind+1:end)),...
+        'LineWidth', plt.lwidth, 'Color', plt.c_rel); % release color
+    set(gca, 'FontSize', plt.axes);
+    xlabel('End Effector X-position (cm)')
+    ylabel('Cable Tension (N)')
+    title(['Measured ', profile_name, ' Force Profile (X-Direction)'])
+    view(0,90)
+
+    % Cut the experimental data at manually-selected local minima
+    plot(x_trial(1:ind_min_stor), F_mag(1:ind_min_stor),...
+        'LineWidth', plt.lwidth, 'Color', plt.c_stor); % storage color
+    hold on;
+    plot(x_trial(half_ind+ind_min_rel:end), F_mag(half_ind+ind_min_rel:end),...
         'LineWidth', plt.lwidth, 'Color', plt.c_rel); % release color
     set(gca, 'FontSize', plt.axes);
     xlabel('End Effector X-position (cm)')
@@ -236,12 +270,43 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     title(['Simulated ', profile_name, ' Cam Force Profile'])
     
     %% Plot experimental and simulated force-displacement profiles together
-    figure();
-    plot(x_trial(1:half_ind), F_trial(1:half_ind), 'LineWidth', plt.lwidth, ...
-        'Color', plt.c_stor); % plot in storage color
+    % figure();
+    % plot(x_trial(1:half_ind), F_trial(1:half_ind), 'LineWidth', plt.lwidth, ...
+    %     'Color', plt.c_stor); % plot in storage color
+    % hold on;
+    % plot(x_trial(half_ind+1:end), F_trial(half_ind+1:end), 'LineWidth', plt.lwidth, ...
+    %     'Color', plt.c_rel); % plot in release color
+    % plot(sim.x, sim.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_sim);
+    % set(gca, 'FontSize', plt.axes);
+    % set(gcf, 'Units', 'inches')
+    % set(gcf, 'Position', [6 6 3.4 2.2])
+    % xlabel('Cable Stroke Distance (cm)', 'FontSize', plt.label)
+    % ylabel('Cable Tension (N)', 'FontSize', plt.label)
+    % % title(['Measured and Predicted ', profile_name, ' Force Profiles'], ...
+    % %     'FontSize', plt.title)
+    % if strcmp(profile_name, 'Sit-to-Stand')
+    %     legend('Measured, Storage', 'Measured, Release', 'Predicted', ...
+    %         'Location', 'northeast', 'FontSize', plt.axes)
+    % end
+    % ylim([0 80])
+
+    if strcmp(profile_name, 'Sit-to-Stand')
+        % Sit-to-Stand colors
+        color_stor = plt.c_stor_sist;
+        color_rel = plt.c_rel_sist;
+    else
+        % Stand-to-Sit colors
+        color_stor = plt.c_stor_stsi;
+        color_rel = plt.c_rel_stsi;
+    end
+
+    figure(handle);
     hold on;
-    plot(x_trial(half_ind+1:end), F_trial(half_ind+1:end), 'LineWidth', plt.lwidth, ...
-        'Color', plt.c_rel); % plot in release color
+    plot(x_trial(1:ind_min_stor), F_mag(1:ind_min_stor),...
+        'LineWidth', plt.lwidth, 'Color', color_stor); % storage color
+    hold on;
+    plot(x_trial(half_ind+ind_min_rel:end), F_mag(half_ind+ind_min_rel:end),...
+        'LineWidth', plt.lwidth, 'Color', color_rel); % release color
     plot(sim.x, sim.F, ':', 'LineWidth', plt.lwidth, 'Color', plt.c_sim);
     set(gca, 'FontSize', plt.axes);
     set(gcf, 'Units', 'inches')
@@ -250,15 +315,19 @@ function plot_fcn(p_traj, F_mag, t_exp, profile_name, folder, plt)
     ylabel('Cable Tension (N)', 'FontSize', plt.label)
     % title(['Measured and Predicted ', profile_name, ' Force Profiles'], ...
     %     'FontSize', plt.title)
-    if strcmp(profile_name, 'Sit-to-Stand')
-        legend('Measured, Storage', 'Measured, Release', 'Predicted', ...
-            'Location', 'northeast', 'FontSize', plt.axes)
-    end
-    % ylim([0 80])
+    % if strcmp(profile_name, 'Sit-to-Stand')
+    %     legend('Measured, Storage', 'Measured, Release', 'Predicted', ...
+    %         'Location', 'northeast', 'FontSize', plt.axes)
+    % end
+    legend( 'St-Si, Stor', 'St-Si, Rel', '', ...
+         'Si-St, Stor', 'Si-St, Rel', 'Predicted',... 
+        'Location', 'northeast', 'FontSize', plt.legend)
+    ylim([0 80])
+    xlim([0 6])
 
 end
 
-function x_traj = process_x(p_traj)
+function [x_traj, F_mag, half_ind] = process_x(p_traj, F_mag)
 % PROCESS_X Offset and negate end-effector data so that pulling on the 
 % cable results in positive cable displacement, starting from 0. Convert to
 % centimeters.
@@ -266,12 +335,33 @@ function x_traj = process_x(p_traj)
     x_traj = 100 * p_traj(1, :);
     x_traj = max(x_traj) - x_traj;
 
+    % Trim F_mag to match chosen experimental duration
+    F_mag = F_mag(1:length(p_traj));
+    % Plot all data during experimental timeframe
+    % Nt_i = 1;
+    % Nt_f = length(F_mag);
+    % F_trial = F_mag(Nt_i:Nt_f);
+    % x_trial = x_traj(Nt_i:Nt_f);
+    half_ind = round(length(F_mag)/2);
+
 end
 
-function results_table = analysis(sim, F_exp, x_exp)
+function results_table = analysis(sim, F_exp, x_exp, profile_name)
 % ANALYSIS Analyze force and displacement values at key points: peak 
 % assistance and when seated
+
+    % Trim at local minima
+    if strcmp(profile_name, 'Sit-to-Stand')
+        % Sit-to-stand:
+        ind_min_stor = 293;
+    else
+        % Stand-to-sit:
+        ind_min_stor = 274;
+    end
     
+    % Align 0 cable stroke with seated force
+    x_exp = x_exp - x_exp(ind_min_stor);
+
     % Divide experimental data into storage and release phases
     half_ind = round(length(F_exp)/2);
     F_stor = F_exp(1:half_ind);
@@ -279,15 +369,26 @@ function results_table = analysis(sim, F_exp, x_exp)
     F_rel = F_exp(half_ind+1:end);
     x_rel = x_exp(half_ind+1:end);
 
+    % Set local minima for energy storage
+    if strcmp(profile_name, 'Sit-to-Stand')
+        % Sit-to-stand:
+        ind_min_stor = 293;
+        ind_min_rel = 311;
+    else
+        % Stand-to-sit:
+        ind_min_stor = 274;
+        ind_min_rel = 330;
+    end
+
     % Storage phase
-    [F_peak_stor, x_peak_stor, F_seat_stor, x_seat_stor, ~] = analysis_calcs(F_stor, x_stor);
+    [F_peak_stor, x_peak_stor, F_seat_stor, x_seat_stor, ~] = analysis_calcs(F_stor, x_stor, ind_min_stor, 'storage');
 
     % Release phase
-    [F_peak_rel, x_peak_rel, F_seat_rel, x_seat_rel, ~] = analysis_calcs(F_rel, x_rel);
+    [F_peak_rel, x_peak_rel, F_seat_rel, x_seat_rel, ~] = analysis_calcs(F_rel, x_rel, ind_min_rel, 'release');
 
     % Simulated
     sim.x = 100 * sim.x;
-    [F_peak_sim, x_peak_sim, F_seat_sim, x_seat_sim, stroke_sim] = analysis_calcs(sim.F, sim.x);
+    [F_peak_sim, x_peak_sim, F_seat_sim, x_seat_sim, stroke_sim] = analysis_calcs(sim.F, sim.x, 0, 'simulation');
 
     % Calculate experimental percent difference from prediction
     % Storage phase
@@ -317,19 +418,33 @@ function results_table = analysis(sim, F_exp, x_exp)
                           'RowNames', {'Predicted', 'Measured (Storage)', '% Difference (Storage)', ...
                           'Measured (Release)', '% Difference (Release)'});
 
-    function [F_peak, x_peak, F_seat, x_seat, stroke] = analysis_calcs(F, x)
+    function [F_peak, x_peak, F_seat, x_seat, stroke] = analysis_calcs(F, x, ind_min, type)
     
-        [F_peak, F_peak_ind] = max(F);
-        x_peak = x(F_peak_ind);
-        
-        [F_seat, F_seat_ind] = max([F(1), F(end)]);
-        if F_seat_ind == 1
-            x_seat = x(1);
+        if strcmp(type, 'storage')
+            [F_peak, F_peak_ind] = max(F(1:ind_min));
+            x_peak = x(F_peak_ind);
+        elseif strcmp(type, 'release')
+            [F_peak, F_peak_ind] = max(F(ind_min:end));
+            x_peak = x(F_peak_ind + ind_min);
         else
-            x_seat = x(end);
+            [F_peak, F_peak_ind] = max(F);
+            x_peak = x(F_peak_ind);
         end
-
-        stroke = max(x);
+        
+        
+        if strcmp(type, 'simulation')
+            [F_seat, F_seat_ind] = max([F(1), F(end)]);
+            if F_seat_ind == 1
+                x_seat = x(1);
+            else
+                x_seat = x(end);
+            end
+            stroke = max(x);
+        else
+            F_seat = F(ind_min);
+            x_seat = x(ind_min);
+            stroke = x_seat;
+        end
 
     end
 
