@@ -44,7 +44,8 @@ t_record = linspace(0, T_tot, N_tot);
 % q = deg2rad([-97.50, 102.43, -0.01, -63.26, -111.18, 85.67, -11.39]'); % table against wall, spring jig clamped to table, sit-to-stand groove aligned
 % q = deg2rad([-97.55, 101.22, 0.39, -65.36, -111.28, 85.98, -10.55]'); % updated 05-21-2026
 % q = deg2rad([-98.15, 101.29, 0.39, -64.97, -111.85, 85.72, -10.81]'); % sit-to-stand updated 05-21-2026_02
-q = deg2rad([-97.86, 103.13, 0.39, -62.76, -111.56, 85.66, -11.16]'); % stand-to-sit updated 06-03-26
+% q = deg2rad([-97.86, 103.13, 0.39, -62.76, -111.56, 85.66, -11.16]'); % stand-to-sit updated 06-03-26
+q = deg2rad([-102.95, 102.01, 0.39, -61.17, -116.27, 83.30, -13.13]'); % sit-to-stand, FT SENSOR REMOVED
 
 H0 = robot.getForwardKinematics(q); 
 R0 = H0(1:3, 1:3);                      % Starting orientation    
@@ -55,7 +56,8 @@ p_des_ee = p_des_ee_ini;
 
 % Example to get joint positions of text file
 q_test = q;                                             % Replace this with the joint configurations of your text files
-pointPos = [ 0, 0, 0.072 ]';
+% pointPos = [ 0, 0, 0.072 ]';
+pointPos = [ 0, 0, 0.0 ]'; % FT SENSOR REMOVED
 H_test = robot.getHybridJacobian(q, 'bodyID', 7, 'pointPos', pointPos );
 p_test = H_test(1:3,4);
 R_test = H_test(1:3,1:3);

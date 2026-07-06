@@ -42,8 +42,10 @@ t     = dt(1:N);
 % Tune to trade off noise rejection vs. responsiveness.
 smoothWindow = 0.05;   % [s]
 F_ft_filt = F_ft;
+F_tau_filt = F_tau;
 for i = 1:6
     F_ft_filt(:,i) = smoothdata(F_ft(:,i), 'gaussian', smoothWindow, 'SamplePoints', t);
+    F_tau_filt(:,i) = smoothdata(F_tau_filt(:,i), 'gaussian', smoothWindow, 'SamplePoints', t);
 end
 
 
@@ -55,8 +57,8 @@ figure('Name','FT-sensor vs. joint-torque wrench','Color','w');
 for i = 1:6
     subplot(3,2,i); hold on; grid on;
     plot(t, F_ft(:,i),      'Color', [0.6 0.75 1], 'LineWidth', 0.8);
-    plot(t, F_ft_filt(:,i), 'Color', [0   0.45 0.9], 'LineWidth', 1.5);
-    plot(t, F_tau(:,i),     '--', 'Color', [0.85 0.33 0.1], 'LineWidth', 1.3);
+    plot(t, F_tau(:,i), 'Color', [0   0.45 0.9], 'LineWidth', 1.5);
+    plot(t, F_tau_filt(:,i),     '--', 'Color', [0.85 0.33 0.1], 'LineWidth', 1.3);
     ylabel(labels{i});
     if i >= 5, xlabel('time [s]'); end
     if i == 1
