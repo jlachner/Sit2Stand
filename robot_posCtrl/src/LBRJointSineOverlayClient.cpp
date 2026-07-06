@@ -241,13 +241,21 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
 
     if (sit2stand) {
         // aligned with sit-to-stand groove:
-        qInitial[0] = -98.15 * M_PI/180;
-        qInitial[1] = 101.29 * M_PI/180;
+        // qInitial[0] = -98.15 * M_PI/180;
+        // qInitial[1] = 101.29 * M_PI/180;
+        // qInitial[2] = 0.39 * M_PI/180;
+        // qInitial[3] = -64.97 * M_PI/180;
+        // qInitial[4] = -111.85 * M_PI/180;
+        // qInitial[5] = 85.72 * M_PI/180;
+        // qInitial[6] = -10.81 * M_PI/180;
+
+        qInitial[0] = -102.95 * M_PI/180;
+        qInitial[1] = 102.01 * M_PI/180;
         qInitial[2] = 0.39 * M_PI/180;
-        qInitial[3] = -64.97 * M_PI/180;
-        qInitial[4] = -111.85 * M_PI/180;
-        qInitial[5] = 85.72 * M_PI/180;
-        qInitial[6] = -10.81 * M_PI/180;
+        qInitial[3] = -61.17 * M_PI/180;
+        qInitial[4] = -116.27 * M_PI/180;
+        qInitial[5] = 83.30 * M_PI/180;
+        qInitial[6] = -13.13 * M_PI/180;
     }
     else {
         // aligned with stand-to-sit groove:
@@ -285,6 +293,7 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
 
 
     pointPosition = Eigen::Vector3d( 0.0, 0.0, 0.0722 );              // FT-Sensor plate + tool offset 72.2 mm -> 0.0722 m
+    pointPosition = Eigen::Vector3d( 0.0, 0.0, 0.0 );              // No FT-Sensor offset
     H = Eigen::MatrixXd::Zero( 4, 4 );
 
 
@@ -334,9 +343,10 @@ LBRJointSineOverlayClient::LBRJointSineOverlayClient()
 
     // Update with your CSV file path (relative or absolute); EDIT _q_data to follow different trajectory
     // if (sit2stand)
-        _q_data = readCSV("../data/q_linear_z_sit_to_stand.csv").transpose();  // Now: N x 7
+        // _q_data = readCSV("../data/q_linear_z_sit_to_stand.csv").transpose();  // Now: N x 7
     // else
         // _q_data = readCSV("../data/q_linear_z_stand_to_sit.csv").transpose();  // Now: N x 7
+    _q_data = readCSV("../data/q_linear_z.csv").transpose();  // Now: N x 7
     _N_data = _q_data.rows();
 
 
